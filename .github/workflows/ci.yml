@@ -25,6 +25,11 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Check Docker availability
+        run: |
+          docker version
+          docker info
+
       - name: Build and verify
         run: mvn clean verify
 
