@@ -10,9 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -22,22 +21,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class RawTechnologySignalRepositoryTest {
 
-  @Container
+  @Container @ServiceConnection
   static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
 
-  @DynamicPropertySource
-  static void postgresProperties(DynamicPropertyRegistry registry) {
-    registry.add("spring.datasource.url", postgres::getJdbcUrl);
-    registry.add("spring.datasource.username", postgres::getUsername);
-    registry.add("spring.datasource.password", postgres::getPassword);
-  }
-
-  private final RawTechnologySignalRepository repository;
-
-  @Autowired
-  RawTechnologySignalRepositoryTest(RawTechnologySignalRepository repository) {
-    this.repository = repository;
-  }
+  @Autowired private RawTechnologySignalRepository repository;
 
   @Test
   void savesRawSignalPayloadAndFindsExistingProviderSignal() {
