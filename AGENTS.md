@@ -88,6 +88,12 @@ Phase 1 executable validation commands:
 
 `mvn clean verify` runs the Maven build, tests, Spotless checks, and JaCoCo report generation.
 
+GitHub Actions validation should remain aligned with local validation:
+
+- `CI / build-and-validate` runs `mvn clean verify` and `docker compose config`.
+- `CI / secret-scan` runs Gitleaks without repository-managed secrets.
+- `CodeQL / analyze-java` runs Java CodeQL analysis with a manual Maven compile.
+
 ## Definition Of Done
 
 A change is done when:

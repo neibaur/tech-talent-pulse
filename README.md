@@ -125,6 +125,8 @@ Phase 1 validation commands:
 - `mvn test`
 - `docker compose config`
 
+GitHub Actions also validates pull requests and pushes to `main` with Maven verification, Docker Compose configuration checks, Gitleaks secret scanning, and CodeQL Java analysis. If GitHub default CodeQL setup is already enabled for this repository, disable default setup before relying on the committed CodeQL workflow to avoid duplicate analysis.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
