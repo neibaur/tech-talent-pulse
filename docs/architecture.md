@@ -8,7 +8,7 @@ The project will use a lightweight hexagonal architecture. The goal is to keep d
 
 ## Planned Components
 
-- **Ingestion adapters**: Fetch public source data, beginning with the GitHub API.
+- **Ingestion adapters**: Fetch public source data, beginning with Stack Overflow questions through the Stack Exchange API.
 - **Application services**: Coordinate ingestion, validation, transformation, and persistence workflows.
 - **Domain model**: Represent technologies, source observations, metrics, trend snapshots, and source metadata.
 - **Persistence adapters**: Store normalized data and analytics-ready metrics in PostgreSQL.
@@ -24,7 +24,7 @@ The Phase 1 foundation follows Maven conventions:
 - `src/test/java`
 - `src/test/resources`
 
-Current application code is limited to the Spring Boot entry point, application configuration, a Flyway baseline migration, and a basic context load test.
+Current application code includes the Spring Boot entry point, application configuration, Flyway migrations, a basic context load test, and a raw Stack Overflow ingestion foundation.
 
 ## Phase 1 Runtime Foundation
 
@@ -33,17 +33,29 @@ Current application code is limited to the Spring Boot entry point, application 
 - Flyway owns schema evolution.
 - Hibernate is configured to validate schema state, not create or update it.
 - PostgreSQL is the only configured database target.
-- Testcontainers dependencies are present for future PostgreSQL integration tests.
-- No domain tables, ingestion clients, ETL jobs, controllers, entities, repositories, or services are implemented yet.
+- Testcontainers supports PostgreSQL repository integration tests.
+- No controllers, dashboard UI, authentication, Kafka/event streaming, GitHub ingestion, or analytics transformation tables are implemented yet.
+
+## Phase 2 Ingestion Foundation
+
+The first ingestion source is Stack Overflow question activity through the Stack Exchange API v2.3 `/questions` endpoint. The implementation follows the existing lightweight hexagonal boundaries:
+
+- `ingestion/domain`: provider, run status, and signal type concepts.
+- `ingestion/application`: orchestration service and external client port.
+- `ingestion/infrastructure/client`: Stack Overflow `RestClient` adapter.
+- `ingestion/infrastructure/persistence`: JPA entities and repositories backed by Flyway-managed PostgreSQL tables.
+- `ingestion/infrastructure/scheduling`: scheduled ingestion trigger, disabled by default.
+
+Raw source records are persisted before any transformation. The `raw_technology_signal` table intentionally stores only provider metadata, source tag, raw JSON payload, and capture time.
 
 ## Data Flow
 
 Planned MVP data flow:
 
-1. Fetch public GitHub activity and repository metadata for selected Java ecosystem technologies.
+1. Fetch public Stack Overflow question data for selected technology tags.
 2. Normalize source data into stable internal records.
-3. Transform records into trend metrics suitable for comparison and dashboard presentation.
-4. Persist source records, metric snapshots, and run metadata in PostgreSQL.
+3. Persist raw source payloads for later transformation.
+4. Transform raw records into metric snapshots in a later phase.
 5. Present recruiter-friendly summaries that include context and limitations.
 
 ## Design Principles

@@ -1,44 +1,46 @@
 # MVP Scope
 
-The first MVP for Tech Talent Pulse will focus on GitHub API data for Java ecosystem technology signals.
+The first MVP for Tech Talent Pulse begins with Stack Overflow question data from the Stack Exchange API and may later add GitHub API data for broader Java ecosystem technology signals.
 
 ## MVP Goal
 
-Build a governed ETL flow that collects public GitHub signals for selected technologies, transforms them into analytics-ready metrics, and prepares them for recruiter-friendly dashboard views.
+Build a governed ETL flow that collects public technology signals for selected technologies, stores raw source payloads safely, and prepares the project for later analytics-ready metrics and recruiter-friendly dashboard views.
 
 ## Initial Technology Set
 
+- Java
 - Spring Boot
-- Quarkus
-- Micronaut
-- Hibernate
-- Kafka
-- Maven
-- Gradle
-- JUnit
-- Testcontainers
+- PostgreSQL
+- Docker
+- Kubernetes
 
 ## Planned Signal Categories
 
-The MVP may evaluate public GitHub signals such as:
+The MVP may evaluate public Stack Overflow signals such as:
+
+- Recent question volume by tag.
+- Question creation timestamps.
+- Stack Overflow tags associated with each question.
+- Source freshness and collection timestamp.
+
+Later phases may add GitHub signals such as:
 
 - Repository activity.
 - Stars, forks, and watcher trends where available.
 - Issue and pull request activity.
 - Release cadence.
-- Contributor activity.
-- Topic and search metadata.
 - Source freshness and collection timestamp.
 
 Exact metrics will be documented before implementation and should include limitations.
 
 ## In Scope
 
-- Java 21 and Spring Boot application foundation in a later phase.
+- Java 21 and Spring Boot application foundation.
 - Maven-based build and validation.
-- GitHub API ingestion for the initial technology set.
+- Stack Exchange API ingestion for Stack Overflow question payloads.
 - PostgreSQL persistence.
 - Repeatable ETL workflow design.
+- Raw source capture with duplicate avoidance where practical.
 - Recruiter-friendly dashboard metrics and explanations.
 - Tests for transformation logic and persistence behavior.
 
@@ -50,7 +52,9 @@ Exact metrics will be documented before implementation and should include limita
 - Real-time streaming requirements.
 - Predictive hiring recommendations.
 - Multi-tenant product features.
-- Application code during Phase 0.
+- Analytics transformations during Phase 2.
+- Dashboard UI during Phase 2.
+- GitHub API ingestion during Phase 2.
 
 ## Success Criteria
 

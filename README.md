@@ -1,8 +1,8 @@
 # Tech Talent Pulse
 
-Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize GitHub activity, developer ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
+Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 1 Spring Boot and PostgreSQL foundation**. This repository now contains the initial Maven build, minimal Spring Boot application entry point, PostgreSQL configuration, Flyway baseline migration, local Docker Compose service definition, and governance documentation.
+Current status: **Phase 2 Stack Overflow ingestion foundation**. This repository now contains the Maven/Spring Boot foundation plus the first raw ingestion path for Stack Exchange API question signals from Stack Overflow.
 
 ## Value Proposition
 
@@ -40,21 +40,15 @@ Maven directory conventions will be used when source code is introduced:
 
 ## Planned Data Sources
 
-The first MVP will focus on GitHub API data for Java ecosystem signals. Later phases may add additional public developer and labor-market signals.
+The first implemented public technology-signal source is the Stack Exchange API for Stack Overflow questions. Later phases may add GitHub activity, package metadata, documentation activity, job posting aggregates, and survey or labor-market datasets where licensing and terms allow responsible use.
 
 Initial technology focus areas:
 
 - Spring Boot
-- Quarkus
-- Micronaut
-- Hibernate
-- Kafka
-- Maven
-- Gradle
-- JUnit
-- Testcontainers
-
-Potential future data sources include public package metadata, documentation activity, job posting aggregates, and survey or labor-market datasets where licensing and terms allow responsible use.
+- Java
+- PostgreSQL
+- Docker
+- Kubernetes
 
 ## Phased Roadmap
 
@@ -70,11 +64,11 @@ Potential future data sources include public package metadata, documentation act
 - Add Spring Boot application structure without production ETL behavior.
 - Add baseline formatting, testing, and validation commands.
 
-### Phase 2: GitHub Signal Ingestion
+### Phase 2: Stack Overflow Raw Signal Ingestion
 
-- Integrate with the GitHub API using environment-based configuration.
-- Collect repository and activity signals for the MVP technology set.
-- Persist normalized source records in PostgreSQL.
+- Integrate with the Stack Exchange API v2.3 questions endpoint for Stack Overflow.
+- Collect recent question payloads for the initial target tags.
+- Persist raw source records in PostgreSQL without analytics transformations.
 
 ### Phase 3: Metrics and Analytics Model
 
@@ -117,9 +111,21 @@ No secret values are committed to the repository.
 
 The local Docker Compose file defines a PostgreSQL service and a named volume for local persistence. It intentionally references environment variable names only.
 
+## Phase 2 Ingestion Foundation
+
+Phase 2 adds a lightweight hexagonal ingestion slice for Stack Overflow question signals:
+
+- `StackOverflowRestClient` uses Spring `RestClient` against the Stack Exchange API v2.3 questions endpoint.
+- `StackOverflowIngestionService` orchestrates configured tag ingestion and duplicate checks.
+- `ingestion_run` records ingestion execution metadata.
+- `raw_technology_signal` stores raw JSON question payloads only.
+- The scheduled job is disabled by default and must be enabled through configuration.
+
+No dashboard, analytics tables, GitHub ingestion, Kafka/event streaming, authentication, or transformation layer has been added.
+
 ## Validation
 
-Phase 1 validation commands:
+Current validation commands:
 
 - `mvn clean verify`
 - `mvn test`

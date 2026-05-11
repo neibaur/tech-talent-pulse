@@ -27,3 +27,16 @@ management:
     health:
       probes:
         enabled: true
+
+tech-talent-pulse:
+  stack-exchange:
+    base-url: https://api.stackexchange.com/2.3
+    site: stackoverflow
+    default-page-size: 25
+    target-tags:
+      - java
+      - spring-boot
+      - postgresql
+      - docker
+      - kubernetes
+    scheduler-enabled: false
