@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 0. Do not create application code until the project moves into an implementation phase.
+The repository is currently in Phase 1. Application foundation code is allowed, but GitHub ingestion, ETL business logic, dashboard UI, external API clients, entities, repositories, and services should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -78,18 +78,21 @@ When implementation begins:
 - Keep tests deterministic and independent from live public APIs.
 - Use fixtures that contain no real or fake secrets.
 
-## Planned Validation Commands
+## Validation Commands
 
-Executable validation commands are not defined yet because the Maven project has not been created.
+Phase 1 executable validation commands:
 
-After the Maven build exists, this section should be updated with planned commands for:
+- `mvn clean verify`
+- `mvn test`
+- `docker compose config`
 
-- Maven build verification.
-- Unit tests.
-- Integration tests.
-- Formatting or lint checks.
-- Documentation checks.
-- Dependency and security checks.
+`mvn clean verify` runs the Maven build, tests, Spotless checks, and JaCoCo report generation.
+
+GitHub Actions validation should remain aligned with local validation:
+
+- `CI / build-and-validate` runs `mvn clean verify` and `docker compose config`.
+- `CI / secret-scan` runs Gitleaks without repository-managed secrets.
+- `CodeQL / analyze-java` runs Java CodeQL analysis with a manual Maven compile.
 
 ## Definition Of Done
 
@@ -109,9 +112,9 @@ Codex should:
 - Read the existing repository context before editing.
 - Keep changes scoped to the user request.
 - Preserve user changes and avoid reverting unrelated work.
-- Avoid generating application code during Phase 0.
+- Keep Phase 1 application code limited to the Spring Boot foundation unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
-- Avoid inventing executable commands before the build system exists.
+- Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.
 - Prefer documentation updates that are concise, professional, and portfolio-ready.
 - Explain any skipped validation clearly.

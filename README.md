@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize GitHub activity, developer ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 0 documentation foundation**. This repository currently contains project governance, architecture intent, MVP scope, and decision records. Application code has not been created yet.
+Current status: **Phase 1 Spring Boot and PostgreSQL foundation**. This repository now contains the initial Maven build, minimal Spring Boot application entry point, PostgreSQL configuration, Flyway baseline migration, local Docker Compose service definition, and governance documentation.
 
 ## Value Proposition
 
@@ -100,11 +100,32 @@ This project is designed to showcase:
 - Security-conscious configuration and secret handling.
 - Clear technical communication for engineering and recruiting audiences.
 
+## Phase 1 Setup
+
+Phase 1 introduces the minimal runtime foundation only. It does not include GitHub ingestion, ETL jobs, dashboard UI, external API clients, entities, repositories, or domain tables.
+
+Local runtime configuration is environment-variable based:
+
+- `TECH_TALENT_PULSE_DATASOURCE_URL`
+- `TECH_TALENT_PULSE_DATASOURCE_USERNAME`
+- `TECH_TALENT_PULSE_DATASOURCE_PASSWORD`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+
+No secret values are committed to the repository.
+
+The local Docker Compose file defines a PostgreSQL service and a named volume for local persistence. It intentionally references environment variable names only.
+
 ## Validation
 
-No working build system exists yet, so this phase intentionally does not define executable validation commands.
+Phase 1 validation commands:
 
-Planned validation commands will be added after the Maven project is created. They are expected to include Maven-based build, test, formatting, and documentation checks.
+- `mvn clean verify`
+- `mvn test`
+- `docker compose config`
+
+GitHub Actions also validates pull requests and pushes to `main` with Maven verification, Docker Compose configuration checks, Gitleaks secret scanning, and CodeQL Java analysis. If GitHub default CodeQL setup is already enabled for this repository, disable default setup before relying on the committed CodeQL workflow to avoid duplicate analysis.
 
 ## License
 

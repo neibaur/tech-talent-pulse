@@ -10,6 +10,8 @@ Briefly describe the purpose of this pull request.
 
 List validation commands, manual checks, or explain why testing is not applicable.
 
+Expected Phase 1 checks include `mvn clean verify`, `mvn test`, `docker compose config`, CI, Gitleaks, and CodeQL where applicable.
+
 ## Screenshots Or Evidence
 
 Add screenshots, logs, dashboard evidence, or documentation links when applicable.
@@ -26,6 +28,7 @@ Add screenshots, logs, dashboard evidence, or documentation links when applicabl
 - [ ] No real or fake secrets, tokens, credentials, or passwords were added.
 - [ ] Environment variable names are used instead of secret values.
 - [ ] Local environment files, logs, dumps, and generated outputs are excluded.
+- [ ] Gitleaks and CodeQL findings were reviewed when available.
 
 ## Documentation Checklist
 
