@@ -1,6 +1,6 @@
 # Architecture
 
-Tech Talent Pulse is planned as a Java 21 Spring Boot ETL and dashboard platform that converts public technology-signal data into recruiter-friendly trend intelligence.
+Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard platform foundation that is planned to convert public technology-signal data into recruiter-friendly trend intelligence.
 
 ## Architectural Style
 
@@ -17,14 +17,24 @@ The project will use a lightweight hexagonal architecture. The goal is to keep d
 
 ## Maven Directory Conventions
 
-When source code is introduced, the repository should follow Maven conventions:
+The Phase 1 foundation follows Maven conventions:
 
 - `src/main/java`
 - `src/main/resources`
 - `src/test/java`
 - `src/test/resources`
 
-Application code is intentionally absent during Phase 0.
+Current application code is limited to the Spring Boot entry point, application configuration, a Flyway baseline migration, and a basic context load test.
+
+## Phase 1 Runtime Foundation
+
+- Spring Boot Actuator provides health support.
+- Spring Data JPA is available for future persistence work.
+- Flyway owns schema evolution.
+- Hibernate is configured to validate schema state, not create or update it.
+- PostgreSQL is the only configured database target.
+- Testcontainers dependencies are present for future PostgreSQL integration tests.
+- No domain tables, ingestion clients, ETL jobs, controllers, entities, repositories, or services are implemented yet.
 
 ## Data Flow
 

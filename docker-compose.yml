@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: tech-talent-pulse-postgres
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5432:5432"
+    volumes:
+      - tech_talent_pulse_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  tech_talent_pulse_postgres_data:
