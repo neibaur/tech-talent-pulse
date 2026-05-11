@@ -1,16 +1,7 @@
-# Compiled class file
+# Java
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -18,7 +9,54 @@
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Maven
+target/
+.mvn/timing.properties
+
+# Gradle placeholder support
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs and editors
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Environment and local configuration
+.env
+.env.*
+application-local.*
+
+# Logs
+*.log
+logs/
+
+# Reports and coverage
+coverage/
+htmlcov/
+site/
+reports/
+generated-reports/
+
+# Local data and exports
+data/local/
+data/dumps/
+*.dump
+*.sql
+*.sqlite
+*.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
