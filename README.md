@@ -4,9 +4,33 @@ Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio p
 
 Current status: **Phase 8 complete: analytics demo readiness**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
 
+## Current Project State After Phase 8C
+
+Tech Talent Pulse is a backend-only analytics platform ready for Phase 9 frontend visualization work.
+It turns public Stack Overflow technology signals into explainable, recruiter-friendly trend
+intelligence through ingestion, raw persistence, daily transformation, read-only dashboard APIs,
+guarded local/demo orchestration, operational history, and Phase 8 analytics.
+
+Current intentional non-goals:
+
+- No frontend has been added yet; Phase 9 can focus on visualization over stable DTO responses.
+- No Kubernetes, production hosting, distributed microservices, or event streaming has been added.
+- No authentication or production admin surface exists yet; operational endpoints remain guarded
+  local/demo tooling.
+- No opaque ML scoring has been added; analytics remain deterministic and explainable.
+- No heavy frontend complexity has been introduced before the backend contracts are proven.
+
 ## Value Proposition
 
 Recruiters and hiring teams often need practical signals about which technologies are gaining traction, where developer communities are active, and how those trends may relate to talent demand. Tech Talent Pulse is designed to turn public technology-signal data into governed, explainable insights that are easier to evaluate than raw repository metrics or job postings alone.
+
+The Phase 8 analytics make that value more direct:
+
+- Trend deltas show whether public activity is increasing or decreasing between snapshot dates.
+- Rising technology insights highlight tags with positive signal growth or rank movement.
+- Tag comparison analytics make it easier to compare competing or adjacent technologies.
+- Explainable metrics were prioritized over opaque scoring so reviewers can understand the evidence
+  behind each result.
 
 The project is intended to demonstrate a production-minded approach to:
 
@@ -21,6 +45,10 @@ The project is intended to demonstrate a production-minded approach to:
 ## Planned Architecture
 
 Tech Talent Pulse uses a lightweight hexagonal/layered architecture so ingestion, transformation, analytics, persistence, and presentation concerns remain separated without adding unnecessary framework ceremony. This shape was chosen to balance maintainability and delivery speed: it keeps core calculations testable, avoids premature job-framework complexity, and lets each phase add a narrow capability without rewriting earlier layers.
+
+Current scale assumptions are intentionally modest: local demos, portfolio review, and small hosted
+deployments with batch-oriented workloads and low-to-medium ingestion volume. The project favors
+maintainability, reproducibility, and clean API contracts over distributed scale at this stage.
 
 Planned layers include:
 
@@ -143,6 +171,13 @@ Initial technology focus areas:
 - Guarded operational APIs for local/demo ingestion, transformation, pipeline execution, and run history readback.
 - Coverage discipline with the Maven JaCoCo bundle line coverage gate kept above 80%.
 - Operational troubleshooting maturity through structured orchestration results, run history, logs, runbooks, and smoke validation.
+
+## Future Architecture Direction
+
+The next sensible increment is Phase 9 frontend visualization over the existing dashboard and
+analytics APIs. Later architecture work can add deployment preparation, hosted PostgreSQL,
+additional providers, observability and metrics, authentication, and portfolio polish once the
+frontend validates the user workflows.
 
 ## Skills Demonstrated
 

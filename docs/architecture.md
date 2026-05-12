@@ -6,6 +6,112 @@ Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard platform foundation
 
 The project uses a lightweight hexagonal/layered architecture. The goal is to keep ingestion, transformation, analytics, API, and persistence concerns separated while avoiding unnecessary ceremony for a portfolio-scale project. This balances maintainability and delivery speed: application services own workflow and calculations, repositories isolate persistence, controllers remain DTO-focused, and the project avoids premature job-framework or platform complexity.
 
+## Current Project State After Phase 8C
+
+After Phase 8C, Tech Talent Pulse is a mature backend analytics portfolio system. It includes:
+
+- Stack Overflow ingestion through a synchronous API adapter.
+- PostgreSQL/Flyway persistence for raw signals, trend snapshots, and ingestion runs.
+- Batch transformation into UTC-normalized daily trend snapshots.
+- Read-only dashboard APIs for recent trends, tag history, and summaries.
+- Read-only analytics APIs for deltas, rising technologies, and tag comparisons.
+- Guarded local/demo orchestration endpoints and operational history readback.
+- Local demo data, Docker Compose PostgreSQL, Testcontainers integration tests, JaCoCo coverage
+  enforcement, CI/security workflows, and curl-based smoke validation.
+
+The repository is ready for Phase 9 frontend work because the API contracts are stable, DTO-based,
+and already shaped for chart-ready consumption.
+
+## Current Non-Goals
+
+These are intentional architecture choices, not omissions:
+
+- **No Kubernetes yet**: local Docker Compose is enough for demo and reviewer workflows.
+- **No distributed microservices yet**: the bounded contexts are still small enough for one modular
+  Spring Boot service.
+- **No authentication yet**: public/demo read APIs are local portfolio endpoints, and operational
+  endpoints are guarded by explicit configuration rather than exposed by default.
+- **No event streaming yet**: batch ingestion and transformation are easier to reason about at the
+  current data volume.
+- **No production hosting yet**: deployment design should follow frontend and authentication
+  decisions.
+- **No heavy frontend complexity yet**: backend analytics contracts were stabilized first so Phase 9
+  can build against a clear API.
+
+## Architecture Tradeoffs
+
+- **Modular monolith over microservices**: one Spring Boot codebase keeps iteration fast, tests
+  straightforward, and transactional boundaries simple. Microservices would add deployment,
+  observability, network, and data-consistency overhead before the domain requires it.
+- **PostgreSQL over NoSQL**: trend snapshots, ingestion runs, uniqueness constraints, and
+  Flyway-managed schema evolution benefit from relational modeling. NoSQL may become useful later
+  for high-volume raw payload archives, but it is unnecessary for the current query patterns.
+- **Batch analytics over real-time streaming**: daily snapshot analytics are explainable,
+  repeatable, and easy to demo. Streaming would increase operational complexity before recruiters
+  need second-by-second freshness.
+- **Guarded admin APIs over always-on operational endpoints**: manual orchestration is useful for
+  local/demo troubleshooting, but it is not a production admin model. Guarding it by configuration
+  avoids accidental exposure while preserving demo ergonomics.
+- **Demo simplicity over production complexity**: Docker Compose, demo profile defaults, and static
+  Markdown docs keep the project reproducible. Production hardening can add secrets management,
+  authentication, hosted infrastructure, and monitoring when those concerns become scoped work.
+
+## Engineering Lessons Learned
+
+- **Flyway migration tracking matters**: migration files must be committed and visible to CI, or
+  local schema state can drift from repository state.
+- **Docker/local runtime consistency matters**: Docker Compose defaults and Spring profile defaults
+  should align so reviewers can start cleanly without hidden exports.
+- **Datasource placeholder fallback needs concrete defaults**: unresolved placeholders such as a
+  literal environment variable name can reach Spring datasource configuration and fail startup.
+- **Empty datasets are not broken applications**: dashboard and analytics APIs correctly return
+  empty collections when no transformed snapshots exist.
+- **Guarded orchestration requires explicit configuration**: admin endpoints return `404` unless
+  `tech-talent-pulse.admin.orchestration.enabled=true` is supplied.
+- **URL-safe API inputs matter**: comparison tags are trimmed and normalized after valid query
+  parsing, but clients should not rely on unencoded spaces in URLs.
+
+## Business And Recruiter Value
+
+The platform converts public developer activity into recruiter-friendly analytics by preserving raw
+signals, transforming them into daily tag-level metrics, and exposing explainable read APIs.
+
+- **Signal count** gives a simple activity baseline.
+- **Trend deltas** show whether a technology is gaining or losing public discussion volume.
+- **Rising technologies** highlight tags with positive growth or improving rank.
+- **Tag comparison** helps compare adjacent skills, such as Java versus Kotlin or PostgreSQL versus
+  another datastore.
+
+Explainable analytics were prioritized over opaque ML scoring because recruiters and hiring managers
+need evidence they can inspect. The project favors transparent metrics, deterministic sorting, and
+documented limitations before adding predictive or probabilistic models.
+
+## Scale Assumptions
+
+The current architecture targets:
+
+- local/demo operation and small hosted deployments;
+- batch-oriented ingestion and transformation;
+- low-to-medium Stack Overflow ingestion volume;
+- daily analytics freshness rather than real-time updates;
+- maintainability, repeatability, and portfolio review clarity over distributed scale.
+
+These assumptions support the current modular monolith. Higher provider volume, multi-user
+production traffic, or real-time freshness requirements would justify revisiting infrastructure,
+queueing, caching, and service boundaries.
+
+## Future Architecture Direction
+
+Likely future phases can add:
+
+- frontend visualization over the existing chart-ready API responses;
+- deployment preparation with environment-specific configuration;
+- hosted PostgreSQL and managed secrets;
+- additional providers such as GitHub or package ecosystem data;
+- observability through metrics, structured request logging, and health dashboards;
+- authentication and a production-grade admin model;
+- portfolio polish such as screenshots, demo scripts, and architecture diagrams.
+
 ## Planned Components
 
 - **Ingestion adapters**: Fetch public source data, beginning with Stack Overflow questions through the Stack Exchange API.

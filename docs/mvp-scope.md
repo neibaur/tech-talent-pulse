@@ -44,6 +44,8 @@ Exact metrics will be documented before implementation and should include limita
 - Read-only advanced analytics endpoints for trend deltas and rising technology insights.
 - Read-only tag comparison analytics for two to five technologies.
 - Analytics demo readiness and smoke validation for local reviewer workflows.
+- Architecture-readiness documentation covering tradeoffs, non-goals, lessons learned, scale
+  assumptions, and future direction.
 - Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - Internal orchestration service for coordinating ingestion and transformation.
 - Opt-in local/demo manual orchestration trigger endpoints.
@@ -77,6 +79,8 @@ Exact metrics will be documented before implementation and should include limita
   and production infrastructure during Phase 8B.
 - Frontend, second data provider, authentication changes, runtime OpenAPI dependency, and production
   infrastructure during Phase 8C.
+- Kubernetes, distributed microservices, event streaming, production hosting, authentication, and
+  frontend implementation during the Phase 8D architecture-readiness documentation spike.
 
 ## Success Criteria
 
