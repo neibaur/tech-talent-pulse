@@ -89,13 +89,22 @@ Current executable validation commands:
 - `mvn test`
 - `docker compose config`
 
-`mvn clean verify` runs the Maven build, tests, Spotless checks, and JaCoCo report generation.
+`mvn clean verify` runs the Maven build, tests, Spotless checks, JaCoCo report generation, and the JaCoCo coverage gate.
+
+JaCoCo report outputs:
+
+- HTML: `target/site/jacoco/index.html`
+- XML: `target/site/jacoco/jacoco.xml`
+- CSV: `target/site/jacoco/jacoco.csv`
+
+The current coverage gate requires at least 80% line coverage at the bundle level. Treat 80% as the near-term minimum and improve branch coverage over time without excluding meaningful application behavior.
 
 PostgreSQL repository integration tests use Testcontainers and should run in Docker-enabled environments. They may be skipped locally when Docker is unavailable, but CI should provide Docker so those tests exercise PostgreSQL.
 
 GitHub Actions validation should remain aligned with local validation:
 
 - `CI / build-and-validate` runs `mvn clean verify` and `docker compose config`.
+- `CI / build-and-validate` uploads JaCoCo reports and failed test reports as artifacts.
 - `CI / secret-scan` runs Gitleaks without repository-managed secrets.
 - `CodeQL / analyze-java` runs Java CodeQL analysis with a manual Maven compile.
 

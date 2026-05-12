@@ -144,6 +144,31 @@ Current validation commands:
 
 GitHub Actions also validates pull requests and pushes to `main` with Maven verification, Docker Compose configuration checks, Gitleaks secret scanning, and CodeQL Java analysis. If GitHub default CodeQL setup is already enabled for this repository, disable default setup before relying on the committed CodeQL workflow to avoid duplicate analysis.
 
+## Coverage
+
+`mvn clean verify` generates JaCoCo coverage reports and enforces the current coverage gate.
+
+Local report outputs:
+
+- HTML: `target/site/jacoco/index.html`
+- XML: `target/site/jacoco/jacoco.xml`
+- CSV: `target/site/jacoco/jacoco.csv`
+
+The current Maven gate requires at least 80% line coverage at the project bundle level. Branch coverage is visible in the report but is not enforced yet; it is a near-term hardening target as the codebase grows.
+
+## Future Secret Readiness
+
+No real API secrets, GitHub repository secrets, or environment secrets are required for the current phase.
+
+Future phases may need secrets for:
+
+- External API keys.
+- Production database credentials.
+- Cloud deployment tokens.
+- Dashboard or BI integration credentials.
+
+When those phases arrive, secrets should be configured through GitHub repository or environment secrets and referenced by environment variable name only. Do not commit `.env`, `.env.*`, example secret values, generated credentials, screenshots, logs, or local shell profiles.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE).
