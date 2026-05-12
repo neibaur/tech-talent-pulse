@@ -149,6 +149,8 @@ Routes:
 - `POST /api/admin/orchestration/ingestion`
 - `POST /api/admin/orchestration/transformation`
 - `POST /api/admin/orchestration/pipeline`
+- `GET /api/admin/orchestration/runs?limit=10`
 
-These endpoints return status, provider, timestamps, ingestion counts, transformed snapshot count,
-and a short message. They are intended for local operational demos, not production exposure.
+Trigger endpoints return status, provider, timestamps, ingestion counts, transformed snapshot count,
+and a short message. Run history returns recent `ingestion_run` records as DTOs with safe limit
+handling. These endpoints are intended for local operational demos, not production exposure.

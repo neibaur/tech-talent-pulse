@@ -92,6 +92,12 @@ The controller is guarded by `tech-talent-pulse.admin.orchestration.enabled=true
 disabled by default. These endpoints are operational demo tools, not authenticated production admin
 APIs.
 
+## Phase 7C Operational History Readback
+
+Phase 7C adds an application service for recent ingestion run history using the existing
+`ingestion_run` table. The guarded admin orchestration API returns DTOs with run metadata, status,
+timestamps, error message, and operational counts, without exposing raw payloads.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -104,7 +110,8 @@ Planned MVP data flow:
 6. Seed explicit local demo data for reviewer walkthroughs when the `demo` profile is active.
 7. Coordinate ingestion and transformation through an internal orchestration service.
 8. Optionally trigger orchestration through local/demo admin endpoints when explicitly enabled.
-9. Present dashboard views that include context and limitations in a later UI phase.
+9. Read back recent ingestion run history through local/demo admin endpoints when explicitly enabled.
+10. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

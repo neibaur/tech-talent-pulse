@@ -44,6 +44,7 @@ Exact metrics will be documented before implementation and should include limita
 - Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - Internal orchestration service for coordinating ingestion and transformation.
 - Opt-in local/demo manual orchestration trigger endpoints.
+- Opt-in local/demo ingestion run history readback using existing persisted run data.
 - PostgreSQL persistence.
 - Repeatable ETL workflow design.
 - Raw source capture with duplicate avoidance where practical.
@@ -63,6 +64,7 @@ Exact metrics will be documented before implementation and should include limita
 - GitHub API ingestion during Phase 6.
 - Authentication, public deployment, and production infrastructure during Phase 6.
 - Production-authenticated admin trigger endpoints during Phase 7B.
+- New orchestration history tables during Phase 7C unless a later task explicitly requires them.
 
 ## Success Criteria
 
