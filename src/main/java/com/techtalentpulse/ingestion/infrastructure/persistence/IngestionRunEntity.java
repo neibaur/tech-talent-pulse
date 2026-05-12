@@ -40,6 +40,12 @@ public class IngestionRunEntity {
   @Column(nullable = false)
   private int itemsCaptured;
 
+  @Column(nullable = false)
+  private int itemsFetched;
+
+  @Column(nullable = false)
+  private int itemsDuplicateSkipped;
+
   protected IngestionRunEntity() {}
 
   public IngestionRunEntity(
@@ -72,6 +78,30 @@ public class IngestionRunEntity {
     return itemsCaptured;
   }
 
+  public int getItemsFetched() {
+    return itemsFetched;
+  }
+
+  public int getItemsDuplicateSkipped() {
+    return itemsDuplicateSkipped;
+  }
+
+  public IngestionProvider getProvider() {
+    return provider;
+  }
+
+  public Instant getStartedAt() {
+    return startedAt;
+  }
+
+  public Instant getCompletedAt() {
+    return completedAt;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
   public void addRequested(int count) {
     itemsRequested += count;
   }
@@ -80,8 +110,19 @@ public class IngestionRunEntity {
     itemsCaptured += count;
   }
 
+  public void addFetched(int count) {
+    itemsFetched += count;
+  }
+
+  public void addDuplicateSkipped(int count) {
+    itemsDuplicateSkipped += count;
+  }
+
   public void complete(Instant completedAt) {
-    this.status = IngestionRunStatus.COMPLETED;
+    this.status =
+        itemsCaptured == 0
+            ? IngestionRunStatus.COMPLETED_ZERO_RECORDS
+            : IngestionRunStatus.COMPLETED;
     this.completedAt = completedAt;
   }
 

@@ -94,6 +94,12 @@ Initial technology focus areas:
 - Add an explicit local `demo` profile that seeds sample Stack Overflow-like data through the normal transformation path.
 - Provide a recruiter-ready local runbook for PostgreSQL, app startup, demo data, curl checks, coverage reports, and validation.
 
+### Phase 7A: Orchestration Foundation
+
+- Add a synchronous application-layer orchestration service for ingestion, transformation, and combined runs.
+- Return structured operational results for future trigger surfaces.
+- Defer manual admin trigger endpoints to Phase 7B.
+
 ## Skills Demonstrated
 
 This project is designed to showcase:
@@ -188,6 +194,10 @@ Runbook:
 - View JaCoCo reports.
 
 See [docs/local-demo-runbook.md](docs/local-demo-runbook.md) for the complete workflow.
+
+## Phase 7A Orchestration Foundation
+
+Phase 7A adds an internal application service that coordinates existing Stack Overflow ingestion and analytics transformation workflows. It returns structured results with status, provider, timing, ingestion counts, duplicate counts, transformed snapshot counts, and a short message. Manual admin REST endpoints are intentionally deferred to Phase 7B.
 
 ## Validation
 

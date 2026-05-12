@@ -37,10 +37,12 @@ class IngestionRunRepositoryTest {
     IngestionRunEntity run =
         new IngestionRunEntity(
             IngestionProvider.STACK_OVERFLOW,
-            IngestionRunStatus.RUNNING,
+            IngestionRunStatus.STARTED,
             Instant.parse("2026-01-01T00:00:00Z"));
     run.addRequested(5);
+    run.addFetched(4);
     run.addCaptured(3);
+    run.addDuplicateSkipped(1);
     run.complete(Instant.parse("2026-01-01T00:01:00Z"));
 
     IngestionRunEntity saved = repository.saveAndFlush(run);
@@ -48,6 +50,8 @@ class IngestionRunRepositoryTest {
     assertThat(saved.getId()).isNotNull();
     assertThat(saved.getStatus()).isEqualTo(IngestionRunStatus.COMPLETED);
     assertThat(saved.getItemsRequested()).isEqualTo(5);
+    assertThat(saved.getItemsFetched()).isEqualTo(4);
     assertThat(saved.getItemsCaptured()).isEqualTo(3);
+    assertThat(saved.getItemsDuplicateSkipped()).isEqualTo(1);
   }
 }
