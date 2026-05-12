@@ -96,6 +96,8 @@ class TechnologyTrendSnapshotRepositoryTest {
             "JAVA", PageRequest.of(0, 10));
     List<TechnologyTrendSnapshotRepository.TagSignalTotal> topTags =
         snapshotRepository.findTopTagsBySignalCount(PageRequest.of(0, 2));
+    List<TechnologyTrendSnapshotEntity> snapshotsForDate =
+        snapshotRepository.findBySnapshotDateOrderByTagAsc(LocalDate.parse("2026-01-02"));
 
     assertThat(recentSnapshots)
         .extracting(TechnologyTrendSnapshotEntity::getTag)
@@ -106,6 +108,14 @@ class TechnologyTrendSnapshotRepositoryTest {
     assertThat(snapshotRepository.findFirstByOrderBySnapshotDateDesc())
         .map(TechnologyTrendSnapshotEntity::getSnapshotDate)
         .contains(LocalDate.parse("2026-01-04"));
+    assertThat(
+            snapshotRepository.findFirstBySnapshotDateBeforeOrderBySnapshotDateDesc(
+                LocalDate.parse("2026-01-04")))
+        .map(TechnologyTrendSnapshotEntity::getSnapshotDate)
+        .contains(LocalDate.parse("2026-01-03"));
+    assertThat(snapshotsForDate)
+        .extracting(TechnologyTrendSnapshotEntity::getTag)
+        .containsExactly("java");
     assertThat(topTags)
         .extracting(TechnologyTrendSnapshotRepository.TagSignalTotal::getTag)
         .containsExactly("java", "docker");
