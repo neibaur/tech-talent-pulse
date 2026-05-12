@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 8A. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, read-only advanced analytics endpoints, static API documentation, explicit local demo data support, synchronous ingestion/transformation orchestration foundation code, opt-in local/demo manual orchestration trigger endpoints, opt-in local/demo ingestion run history readback, and local smoke validation scripting are allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, production admin APIs, new orchestration history tables, queues, scheduler changes, predictive scoring, and additional external clients should wait for later scoped phases.
+The repository is currently in Phase 8B. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, read-only advanced analytics endpoints, read-only tag comparison analytics, static API documentation, explicit local demo data support, synchronous ingestion/transformation orchestration foundation code, opt-in local/demo manual orchestration trigger endpoints, opt-in local/demo ingestion run history readback, and local smoke validation scripting are allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, production admin APIs, new orchestration history tables, queues, scheduler changes, predictive scoring, and additional external clients should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -137,6 +137,7 @@ Codex should:
 - Keep Phase 7C work limited to opt-in local/demo operational history readback from existing `ingestion_run` data unless a later task explicitly expands scope.
 - Keep Phase 7D work limited to local smoke validation scripting and final operational documentation polish unless a later task explicitly expands scope.
 - Keep Phase 8A work limited to read-only trend delta and rising technology analytics over existing `technology_trend_snapshot` data unless a later task explicitly expands scope.
+- Keep Phase 8B work limited to read-only tag comparison analytics over existing `technology_trend_snapshot` data unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
 - Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.

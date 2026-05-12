@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 8A advanced analytics foundation**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta and rising technology APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
+Current status: **Phase 8B tag comparison analytics**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
 
 ## Value Proposition
 
@@ -122,6 +122,12 @@ Initial technology focus areas:
 - Add read-only trend delta analytics comparing the latest snapshot date to the previous snapshot date.
 - Add rising technology insight responses sorted by signal growth and rank movement.
 - Keep analytics responses DTO-based, deterministic, and safe around missing or zero previous data.
+
+### Phase 8B: Tag Comparison Analytics
+
+- Add read-only comparison analytics for two to five requested tags.
+- Return chart-ready per-tag summaries, delta metrics, and bounded historical series.
+- Preserve requested tag ordering while handling duplicates and missing tags predictably.
 
 ## Key Engineering Outcomes
 
@@ -288,6 +294,16 @@ curl "http://localhost:8080/api/analytics/trends/rising?limit=5"
 ```
 
 Deltas include current and previous signal counts, absolute delta, percent change when previous data is non-zero, current rank, previous rank, and rank movement. Missing previous data is represented with `previousSignalCount` of `0` and nullable percent/rank fields.
+
+## Phase 8B Tag Comparison Analytics
+
+Phase 8B adds a chart-ready comparison endpoint for recruiter-facing technology comparisons:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/compare?tags=java,python,postgresql"
+```
+
+The endpoint accepts two to five unique tags, normalizes whitespace and case, preserves requested tag order, and returns one comparison object per requested tag. Each object includes latest metrics when available, tag-local delta metrics against the previous point for that tag, and up to 30 recent historical snapshot points. Missing tags are returned with `found=false` instead of failing the request.
 
 ## Validation
 
