@@ -85,6 +85,13 @@ existing Stack Overflow ingestion and analytics transformation services. The orc
 returns structured results for future trigger surfaces, while manual admin REST endpoints remain
 deferred to Phase 7B.
 
+## Phase 7B Manual Orchestration Triggers
+
+Phase 7B exposes the orchestration application service through opt-in local/demo REST endpoints.
+The controller is guarded by `tech-talent-pulse.admin.orchestration.enabled=true` and remains
+disabled by default. These endpoints are operational demo tools, not authenticated production admin
+APIs.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -96,7 +103,8 @@ Planned MVP data flow:
 5. Serve recruiter-friendly trend data through read-only REST endpoints.
 6. Seed explicit local demo data for reviewer walkthroughs when the `demo` profile is active.
 7. Coordinate ingestion and transformation through an internal orchestration service.
-8. Present dashboard views that include context and limitations in a later UI phase.
+8. Optionally trigger orchestration through local/demo admin endpoints when explicitly enabled.
+9. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 
