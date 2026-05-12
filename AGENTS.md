@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 9A. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, read-only advanced analytics endpoints, read-only tag comparison analytics, analytics demo documentation, architecture-readiness documentation, static API documentation, explicit local demo data support, synchronous ingestion/transformation orchestration foundation code, opt-in local/demo manual orchestration trigger endpoints, opt-in local/demo ingestion run history readback, local smoke validation scripting, and a lightweight Astro frontend foundation are allowed. GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, production admin APIs, new orchestration history tables, queues, scheduler changes, predictive scoring, additional external clients, and heavy frontend state frameworks should wait for later scoped phases.
+The repository is currently in Phase 9B. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, read-only advanced analytics endpoints, read-only tag comparison analytics, analytics demo documentation, architecture-readiness documentation, static API documentation, explicit local demo data support, synchronous ingestion/transformation orchestration foundation code, opt-in local/demo manual orchestration trigger endpoints, opt-in local/demo ingestion run history readback, local smoke validation scripting, a lightweight Astro frontend foundation, and focused dashboard polish are allowed. GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, production admin APIs, new orchestration history tables, queues, scheduler changes, predictive scoring, additional external clients, and heavy frontend state frameworks should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -141,6 +141,7 @@ Codex should:
 - Keep Phase 8C work limited to analytics demo readiness, local smoke validation coverage, and documentation polish unless a later task explicitly expands scope.
 - Keep Phase 8D work limited to documentation and architecture-readiness context unless a later task explicitly expands scope.
 - Keep Phase 9A work limited to a lightweight Astro frontend foundation, local backend connectivity, basic visualization, and documentation unless a later task explicitly expands scope.
+- Keep Phase 9B work limited to frontend dashboard presentation polish, UX resilience, accessibility improvements, and documentation unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
 - Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.

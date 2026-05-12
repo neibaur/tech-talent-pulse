@@ -2,9 +2,9 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 9A in progress: frontend foundation**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, a local smoke validation script, and a lightweight Astro frontend foundation for reviewers.
+Current status: **Phase 9B in progress: dashboard polish**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, a local smoke validation script, and a polished lightweight Astro dashboard for reviewers.
 
-## Current Project State During Phase 9A
+## Current Project State During Phase 9B
 
 Tech Talent Pulse is a backend analytics platform now gaining a lightweight Phase 9 frontend.
 It turns public Stack Overflow technology signals into explainable, recruiter-friendly trend
@@ -17,7 +17,7 @@ Current intentional non-goals:
   local/demo tooling.
 - No Kubernetes, production hosting, distributed microservices, or event streaming has been added.
 - No opaque ML scoring has been added; analytics remain deterministic and explainable.
-- No heavy frontend complexity has been introduced; the Phase 9A UI is a thin visualization layer.
+- No heavy frontend complexity has been introduced; the Phase 9B UI remains a thin visualization layer.
 
 ## Value Proposition
 
@@ -168,6 +168,13 @@ Initial technology focus areas:
 - Fetch existing Spring Boot analytics APIs through environment-driven API configuration.
 - Visualize rising technologies, trend summary data, and Java/Python/PostgreSQL comparison history.
 - Keep the UI frontend-only, auth-free, and intentionally small before Phase 9 expands the dashboard.
+
+### Phase 9B: Dashboard Polish
+
+- Improve the recruiter/demo dashboard hierarchy, explanatory copy, and responsive layout.
+- Add clearer metric cards for latest snapshot date, total top-tag signals, and top technology.
+- Improve rising technology metric labels, null handling, and comparison chart readability.
+- Keep the frontend lightweight with Astro, one React dashboard island, and Recharts only.
 
 ## Key Engineering Outcomes
 
@@ -365,11 +372,13 @@ snapshot data exists. For a full local demo, start PostgreSQL, run the app with 
 enable demo data and guarded admin orchestration, and run the smoke script. Phase 9 can build a
 frontend visualization layer over these stable DTO responses without changing the backend API shape.
 
-## Phase 9A Frontend Foundation
+## Phase 9 Frontend Dashboard
 
-Phase 9A adds a lightweight Astro frontend under `frontend/`. The frontend runs independently from
-the Spring Boot app, uses React only for the dashboard/chart island, and renders a Recharts line
-chart for tag comparison history.
+Phase 9 adds a lightweight Astro frontend under `frontend/`. The frontend runs independently from
+the Spring Boot app, uses React only for the dashboard/chart island, and renders a polished Recharts
+line chart for tag comparison history. The dashboard is designed for recruiter screen shares:
+summary cards explain the latest snapshot, the rising technologies table explains growth metrics,
+and the comparison section makes missing local demo data explicit instead of hiding it.
 
 Default local ports:
 
@@ -402,6 +411,11 @@ PUBLIC_TECH_TALENT_PULSE_API_URL="http://localhost:8080" pnpm run dev
 Spring Boot allows the local Astro dev server origin by default through
 `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, which defaults to `http://localhost:4321`. This is a
 local-development CORS setting, not a production CORS policy.
+
+If the dashboard shows an offline message, start the Spring Boot backend and confirm
+`http://localhost:8080/actuator/health` returns `200`. If the dashboard is reachable but cards or
+charts are empty, load demo data or run the guarded orchestration pipeline so transformed analytics
+snapshots exist.
 
 ## Validation
 
