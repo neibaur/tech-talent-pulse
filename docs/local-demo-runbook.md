@@ -128,6 +128,12 @@ Run ingestion followed by transformation:
 curl -X POST http://localhost:8080/api/admin/orchestration/pipeline
 ```
 
+View recent ingestion run history:
+
+```bash
+curl "http://localhost:8080/api/admin/orchestration/runs?limit=10"
+```
+
 Example response shape:
 
 ```json
@@ -144,6 +150,25 @@ Example response shape:
 }
 ```
 
+Example history response shape:
+
+```json
+[
+  {
+    "id": "11111111-1111-1111-1111-111111111111",
+    "provider": "STACK_OVERFLOW",
+    "status": "COMPLETED",
+    "startedAt": "2026-01-05T12:00:00Z",
+    "completedAt": "2026-01-05T12:00:30Z",
+    "errorMessage": null,
+    "itemsRequested": 25,
+    "itemsCaptured": 20,
+    "itemsFetched": 22,
+    "itemsDuplicateSkipped": 2
+  }
+]
+```
+
 After a trigger completes, verify the app and dashboard data:
 
 ```bash
@@ -152,7 +177,9 @@ curl "http://localhost:8080/api/trends"
 curl "http://localhost:8080/api/trends/summary"
 ```
 
-These endpoints are local/demo operational tools. They are not production-authenticated admin APIs.
+The run history endpoint helps troubleshoot local ingestion runs by showing recent statuses,
+timestamps, counts, and error messages without exposing raw payloads. These endpoints are local/demo
+operational tools. They are not production-authenticated admin APIs.
 
 ## 7. Lightweight API Smoke Test
 
@@ -189,6 +216,8 @@ The current line coverage gate is `80%` at the Maven bundle level.
   is supplied explicitly.
 - Demo datasource defaults are local-only and can be overridden through environment variables.
 - Manual orchestration trigger endpoints are disabled unless explicitly enabled.
+- Operational history readback is disabled unless manual orchestration endpoints are explicitly
+  enabled.
 - No Flyway migration inserts demo data.
 - No external API calls are required for the demo workflow.
 - No production secrets or credential values are stored in demo configuration.

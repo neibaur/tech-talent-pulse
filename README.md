@@ -105,6 +105,12 @@ Initial technology focus areas:
 - Keep admin orchestration endpoints disabled unless explicitly enabled through configuration.
 - Treat manual triggers as local operational tools, not production-authenticated admin APIs.
 
+### Phase 7C: Operational History Readback
+
+- Add guarded local/demo readback for recent ingestion runs using existing `ingestion_run` data.
+- Keep history responses DTO-based and free of raw source payloads.
+- Apply safe default and maximum limits for operational history queries.
+
 ## Skills Demonstrated
 
 This project is designed to showcase:
@@ -223,6 +229,16 @@ curl -X POST http://localhost:8080/api/admin/orchestration/pipeline
 ```
 
 These endpoints are local operational tools. They do not add authentication, authorization, deployment infrastructure, or a production admin surface.
+
+## Phase 7C Operational History Readback
+
+Phase 7C adds a guarded readback endpoint for recent ingestion run history. It reuses the existing `ingestion_run` table and is enabled by the same local/demo property as the manual triggers.
+
+```bash
+curl "http://localhost:8080/api/admin/orchestration/runs?limit=10"
+```
+
+The response includes run id, provider, status, timestamps, error message, and ingestion counts. Raw payloads and external API responses are not exposed.
 
 ## Validation
 

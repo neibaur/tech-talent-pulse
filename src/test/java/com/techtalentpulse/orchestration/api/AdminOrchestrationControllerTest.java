@@ -1,15 +1,21 @@
 package com.techtalentpulse.orchestration.api;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.techtalentpulse.ingestion.domain.IngestionProvider;
+import com.techtalentpulse.ingestion.domain.IngestionRunStatus;
+import com.techtalentpulse.orchestration.application.IngestionRunHistory;
+import com.techtalentpulse.orchestration.application.OperationalHistoryService;
 import com.techtalentpulse.orchestration.application.OrchestrationResult;
 import com.techtalentpulse.orchestration.application.OrchestrationStatus;
 import com.techtalentpulse.orchestration.application.TechnologySignalOrchestrationService;
 import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +30,8 @@ class AdminOrchestrationControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private TechnologySignalOrchestrationService orchestrationService;
+
+  @MockitoBean private OperationalHistoryService operationalHistoryService;
 
   @Test
   void ingestionEndpointReturnsOrchestrationResult() throws Exception {
@@ -66,6 +74,39 @@ class AdminOrchestrationControllerTest {
         .andExpect(jsonPath("$.persistedCount").value(3))
         .andExpect(jsonPath("$.duplicateCount").value(1))
         .andExpect(jsonPath("$.transformedSnapshotCount").value(2));
+  }
+
+  @Test
+  void recentRunsEndpointReturnsIngestionRunHistory() throws Exception {
+    UUID runId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    when(operationalHistoryService.effectiveLimit(5)).thenReturn(5);
+    when(operationalHistoryService.getRecentIngestionRuns(5))
+        .thenReturn(
+            List.of(
+                new IngestionRunHistory(
+                    runId,
+                    IngestionProvider.STACK_OVERFLOW,
+                    IngestionRunStatus.COMPLETED,
+                    Instant.parse("2026-01-05T12:00:00Z"),
+                    Instant.parse("2026-01-05T12:00:30Z"),
+                    null,
+                    25,
+                    20,
+                    22,
+                    2)));
+
+    mockMvc
+        .perform(get("/api/admin/orchestration/runs").param("limit", "5"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(runId.toString()))
+        .andExpect(jsonPath("$[0].provider").value("STACK_OVERFLOW"))
+        .andExpect(jsonPath("$[0].status").value("COMPLETED"))
+        .andExpect(jsonPath("$[0].startedAt").value("2026-01-05T12:00:00Z"))
+        .andExpect(jsonPath("$[0].completedAt").value("2026-01-05T12:00:30Z"))
+        .andExpect(jsonPath("$[0].itemsRequested").value(25))
+        .andExpect(jsonPath("$[0].itemsCaptured").value(20))
+        .andExpect(jsonPath("$[0].itemsFetched").value(22))
+        .andExpect(jsonPath("$[0].itemsDuplicateSkipped").value(2));
   }
 
   private OrchestrationResult result(
