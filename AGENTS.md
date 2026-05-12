@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 3. Stack Overflow raw ingestion and daily analytics transformation code is allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, and additional external clients should wait for later scoped phases.
+The repository is currently in Phase 5. Stack Overflow raw ingestion, daily analytics transformation code, and read-only dashboard API endpoints are allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, and additional external clients should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -58,6 +58,7 @@ When application code is introduced:
 - Prefer Spring `RestClient` for synchronous HTTP integrations.
 - Keep raw ingestion separate from analytics transformations.
 - Keep analytics transformations focused on explainable, dashboard-ready metrics.
+- Keep dashboard API controllers thin and avoid exposing JPA entities directly.
 
 ## Linter Enforcement Expectations
 
@@ -129,6 +130,7 @@ Codex should:
 - Keep Phase 1 application code limited to the Spring Boot foundation unless a later task explicitly expands scope.
 - Keep Phase 2 ingestion limited to raw Stack Overflow question capture unless a later task explicitly expands scope.
 - Keep Phase 3 transformations limited to Stack Overflow daily tag-level trend metrics unless a later task explicitly expands scope.
+- Keep Phase 5 API work limited to read-only dashboard metrics unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
 - Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.

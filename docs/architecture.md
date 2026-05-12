@@ -24,7 +24,7 @@ The Phase 1 foundation follows Maven conventions:
 - `src/test/java`
 - `src/test/resources`
 
-Current application code includes the Spring Boot entry point, application configuration, Flyway migrations, a basic context load test, a raw Stack Overflow ingestion foundation, and the first analytics transformation slice.
+Current application code includes the Spring Boot entry point, application configuration, Flyway migrations, a basic context load test, a raw Stack Overflow ingestion foundation, the first analytics transformation slice, and read-only dashboard API endpoints.
 
 ## Phase 1 Runtime Foundation
 
@@ -34,7 +34,7 @@ Current application code includes the Spring Boot entry point, application confi
 - Hibernate is configured to validate schema state, not create or update it.
 - PostgreSQL is the only configured database target.
 - Testcontainers supports PostgreSQL repository integration tests.
-- No controllers, dashboard UI, authentication, Kafka/event streaming, or GitHub ingestion are implemented yet.
+- No dashboard UI, authentication, Kafka/event streaming, or GitHub ingestion are implemented yet.
 
 ## Phase 2 Ingestion Foundation
 
@@ -58,6 +58,16 @@ The first transformation slice converts raw Stack Overflow question signals into
 
 The analytics table is intentionally narrow and dashboard-ready. It stores signal count, average score, average answer count, and capture time for one provider/tag/snapshot date combination.
 
+## Phase 5 Dashboard API Layer
+
+The dashboard API layer exposes read-only views over analytics snapshots:
+
+- `dashboard/domain`: API-facing dashboard concepts such as trend snapshots, summaries, and top-tag totals.
+- `dashboard/application`: query orchestration, DTO-independent mapping, and safe limit handling.
+- `dashboard/api`: Spring MVC controllers and response DTOs.
+
+The controller layer does not expose JPA entities directly. It delegates query behavior to application services and returns HTTP 200 with empty collections for empty dashboard data. Authentication is intentionally deferred until a later phase with a defined security model.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -66,7 +76,8 @@ Planned MVP data flow:
 2. Normalize source data into stable internal records.
 3. Persist raw source payloads for later transformation.
 4. Transform raw records into daily metric snapshots.
-5. Present recruiter-friendly summaries that include context and limitations.
+5. Serve recruiter-friendly trend data through read-only REST endpoints.
+6. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +81,37 @@ class TechnologyTrendSnapshotRepositoryTest {
     assertThat(updatedSnapshot.getAverageAnswerCount()).isEqualTo(1.0);
   }
 
+  @Test
+  void findsRecentSnapshotsTagHistoryAndTopTags() {
+    snapshotRepository.saveAllAndFlush(
+        List.of(
+            snapshot("java", "2026-01-02", 8),
+            snapshot("docker", "2026-01-03", 3),
+            snapshot("java", "2026-01-04", 5)));
+
+    List<TechnologyTrendSnapshotEntity> recentSnapshots =
+        snapshotRepository.findAllByOrderBySnapshotDateDescTagAsc(PageRequest.of(0, 2));
+    List<TechnologyTrendSnapshotEntity> javaHistory =
+        snapshotRepository.findByTagIgnoreCaseOrderBySnapshotDateDesc(
+            "JAVA", PageRequest.of(0, 10));
+    List<TechnologyTrendSnapshotRepository.TagSignalTotal> topTags =
+        snapshotRepository.findTopTagsBySignalCount(PageRequest.of(0, 2));
+
+    assertThat(recentSnapshots)
+        .extracting(TechnologyTrendSnapshotEntity::getTag)
+        .containsExactly("java", "docker");
+    assertThat(javaHistory)
+        .extracting(TechnologyTrendSnapshotEntity::getSnapshotDate)
+        .containsExactly(LocalDate.parse("2026-01-04"), LocalDate.parse("2026-01-02"));
+    assertThat(snapshotRepository.findFirstByOrderBySnapshotDateDesc())
+        .map(TechnologyTrendSnapshotEntity::getSnapshotDate)
+        .contains(LocalDate.parse("2026-01-04"));
+    assertThat(topTags)
+        .extracting(TechnologyTrendSnapshotRepository.TagSignalTotal::getTag)
+        .containsExactly("java", "docker");
+    assertThat(topTags.getFirst().getSignalCount()).isEqualTo(13);
+  }
+
   private RawTechnologySignalEntity rawSignal(String providerId, String tag, String payload) {
     return new RawTechnologySignalEntity(
         IngestionProvider.STACK_OVERFLOW,
@@ -88,6 +120,18 @@ class TechnologyTrendSnapshotRepositoryTest {
         tag,
         payload,
         Instant.parse("2026-01-02T00:00:00Z"));
+  }
+
+  private TechnologyTrendSnapshotEntity snapshot(String tag, String snapshotDate, int signalCount) {
+    return new TechnologyTrendSnapshotEntity(
+        new com.techtalentpulse.transformation.domain.TechnologyTrendMetric(
+            LocalDate.parse(snapshotDate),
+            tag,
+            IngestionProvider.STACK_OVERFLOW,
+            signalCount,
+            3.0,
+            1.0),
+        Instant.parse("2026-01-05T00:00:00Z"));
   }
 
   private static void registerPostgresProperties(
