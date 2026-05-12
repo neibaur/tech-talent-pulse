@@ -154,3 +154,14 @@ Routes:
 Trigger endpoints return status, provider, timestamps, ingestion counts, transformed snapshot count,
 and a short message. Run history returns recent `ingestion_run` records as DTOs with safe limit
 handling. These endpoints are intended for local operational demos, not production exposure.
+
+## Local Smoke Validation
+
+When the app is running locally with admin orchestration enabled, validate the demo API surface with:
+
+```bash
+bash scripts/smoke-local-demo.sh
+```
+
+The script checks the health endpoint, read-only dashboard endpoints, manual orchestration triggers,
+and recent run history. It uses curl only and does not require additional dependencies.

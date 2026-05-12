@@ -98,6 +98,13 @@ Phase 7C adds an application service for recent ingestion run history using the 
 `ingestion_run` table. The guarded admin orchestration API returns DTOs with run metadata, status,
 timestamps, error message, and operational counts, without exposing raw payloads.
 
+## Phase 7D Local Smoke Validation
+
+Phase 7D adds a dependency-free curl smoke script under `scripts/` so reviewers can validate the
+local operational flow after the app is already running. It exercises health, dashboard read APIs,
+manual orchestration triggers, and recent run history without adding frontend, authentication,
+deployment infrastructure, queues, or scheduler changes.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -111,7 +118,8 @@ Planned MVP data flow:
 7. Coordinate ingestion and transformation through an internal orchestration service.
 8. Optionally trigger orchestration through local/demo admin endpoints when explicitly enabled.
 9. Read back recent ingestion run history through local/demo admin endpoints when explicitly enabled.
-10. Present dashboard views that include context and limitations in a later UI phase.
+10. Validate the local operational demo flow with the smoke script.
+11. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 6 API demo documentation**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, read-only REST endpoints for dashboard-ready metrics, and a local demo workflow for reviewers.
+Current status: **Phase 7 operational demo workflow**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, read-only REST endpoints for dashboard-ready metrics, local demo data support, opt-in orchestration triggers, operational run history readback, and a local smoke validation script for reviewers.
 
 ## Value Proposition
 
@@ -110,6 +110,12 @@ Initial technology focus areas:
 - Add guarded local/demo readback for recent ingestion runs using existing `ingestion_run` data.
 - Keep history responses DTO-based and free of raw source payloads.
 - Apply safe default and maximum limits for operational history queries.
+
+### Phase 7D: Local Smoke Validation
+
+- Add a curl-based local smoke script for the demo operational flow.
+- Document manual curl fallback commands and troubleshooting guidance.
+- Summarize Phase 7 operational capabilities and known limitations.
 
 ## Skills Demonstrated
 
@@ -239,6 +245,16 @@ curl "http://localhost:8080/api/admin/orchestration/runs?limit=10"
 ```
 
 The response includes run id, provider, status, timestamps, error message, and ingestion counts. Raw payloads and external API responses are not exposed.
+
+## Phase 7D Local Smoke Validation
+
+Phase 7D adds a lightweight smoke script for reviewers who have PostgreSQL and the Spring Boot app already running with admin orchestration enabled:
+
+```bash
+bash scripts/smoke-local-demo.sh
+```
+
+The script checks health, dashboard read APIs, manual orchestration triggers, and recent run history. Windows users can run it from Git Bash. See [docs/local-demo-runbook.md](docs/local-demo-runbook.md) for startup commands, manual curl equivalents, and troubleshooting notes.
 
 ## Validation
 
