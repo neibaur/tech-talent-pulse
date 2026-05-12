@@ -5,5 +5,8 @@ spring:
     password: ${TECH_TALENT_PULSE_DEMO_DATASOURCE_PASSWORD:${POSTGRES_PASSWORD:tech_talent_pulse}}
 
 tech-talent-pulse:
+  admin:
+    orchestration:
+      enabled: false
   demo-data:
     enabled: false

@@ -43,6 +43,7 @@ Exact metrics will be documented before implementation and should include limita
 - Read-only REST endpoints for dashboard-ready trend snapshots and summaries.
 - Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - Internal orchestration service for coordinating ingestion and transformation.
+- Opt-in local/demo manual orchestration trigger endpoints.
 - PostgreSQL persistence.
 - Repeatable ETL workflow design.
 - Raw source capture with duplicate avoidance where practical.
@@ -61,7 +62,7 @@ Exact metrics will be documented before implementation and should include limita
 - Dashboard UI during Phase 6.
 - GitHub API ingestion during Phase 6.
 - Authentication, public deployment, and production infrastructure during Phase 6.
-- Manual admin trigger endpoints during Phase 7A.
+- Production-authenticated admin trigger endpoints during Phase 7B.
 
 ## Success Criteria
 

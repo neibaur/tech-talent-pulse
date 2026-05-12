@@ -101,7 +101,60 @@ Health check:
 curl "http://localhost:8080/actuator/health"
 ```
 
-## 6. Lightweight API Smoke Test
+## 6. Optional Manual Orchestration Triggers
+
+Manual orchestration trigger endpoints are disabled by default. Enable them only for local/demo
+operational use:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments="--tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+Run ingestion only:
+
+```bash
+curl -X POST http://localhost:8080/api/admin/orchestration/ingestion
+```
+
+Run transformation only:
+
+```bash
+curl -X POST http://localhost:8080/api/admin/orchestration/transformation
+```
+
+Run ingestion followed by transformation:
+
+```bash
+curl -X POST http://localhost:8080/api/admin/orchestration/pipeline
+```
+
+Example response shape:
+
+```json
+{
+  "status": "COMPLETED",
+  "provider": "STACK_OVERFLOW",
+  "startedAt": "2026-01-05T12:00:00Z",
+  "completedAt": "2026-01-05T12:00:30Z",
+  "fetchedCount": 25,
+  "persistedCount": 20,
+  "duplicateCount": 5,
+  "transformedSnapshotCount": 4,
+  "message": "Ingestion and transformation completed."
+}
+```
+
+After a trigger completes, verify the app and dashboard data:
+
+```bash
+curl "http://localhost:8080/actuator/health"
+curl "http://localhost:8080/api/trends"
+curl "http://localhost:8080/api/trends/summary"
+```
+
+These endpoints are local/demo operational tools. They are not production-authenticated admin APIs.
+
+## 7. Lightweight API Smoke Test
 
 After the app starts with the `demo` profile, these commands should return HTTP 200:
 
@@ -111,7 +164,7 @@ curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/java?
 curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/summary?limit=5"
 ```
 
-## 7. Run Validation
+## 8. Run Validation
 
 Run the full local validation gate:
 
@@ -135,6 +188,7 @@ The current line coverage gate is `80%` at the Maven bundle level.
 - Demo data is not loaded by the `demo` profile unless `tech-talent-pulse.demo-data.enabled=true`
   is supplied explicitly.
 - Demo datasource defaults are local-only and can be overridden through environment variables.
+- Manual orchestration trigger endpoints are disabled unless explicitly enabled.
 - No Flyway migration inserts demo data.
 - No external API calls are required for the demo workflow.
 - No production secrets or credential values are stored in demo configuration.

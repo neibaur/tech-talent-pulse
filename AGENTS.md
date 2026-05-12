@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 7A. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, static API documentation, explicit local demo data support, and synchronous ingestion/transformation orchestration foundation code are allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, manual admin trigger endpoints, and additional external clients should wait for later scoped phases.
+The repository is currently in Phase 7B. Stack Overflow raw ingestion, daily analytics transformation code, read-only dashboard API endpoints, static API documentation, explicit local demo data support, synchronous ingestion/transformation orchestration foundation code, and opt-in local/demo manual orchestration trigger endpoints are allowed. Dashboard UI, GitHub ingestion, Kafka/event streaming, authentication/security stack, deployment infrastructure, production admin APIs, and additional external clients should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -133,6 +133,7 @@ Codex should:
 - Keep Phase 5 API work limited to read-only dashboard metrics unless a later task explicitly expands scope.
 - Keep Phase 6 work limited to API documentation, local demo data, and reviewer runbook improvements unless a later task explicitly expands scope.
 - Keep Phase 7A work limited to orchestration foundation, operational result objects, ingestion run status/count tracking, and logging unless a later task explicitly expands scope.
+- Keep Phase 7B work limited to opt-in local/demo manual orchestration trigger endpoints unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
 - Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.

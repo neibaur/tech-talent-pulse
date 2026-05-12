@@ -29,6 +29,9 @@ management:
         enabled: true
 
 tech-talent-pulse:
+  admin:
+    orchestration:
+      enabled: false
   stack-exchange:
     base-url: https://api.stackexchange.com/2.3
     site: stackoverflow

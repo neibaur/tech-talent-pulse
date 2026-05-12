@@ -98,7 +98,12 @@ Initial technology focus areas:
 
 - Add a synchronous application-layer orchestration service for ingestion, transformation, and combined runs.
 - Return structured operational results for future trigger surfaces.
-- Defer manual admin trigger endpoints to Phase 7B.
+
+### Phase 7B: Manual Orchestration Triggers
+
+- Add opt-in local/demo REST triggers for ingestion, transformation, and combined orchestration.
+- Keep admin orchestration endpoints disabled unless explicitly enabled through configuration.
+- Treat manual triggers as local operational tools, not production-authenticated admin APIs.
 
 ## Skills Demonstrated
 
@@ -198,6 +203,26 @@ See [docs/local-demo-runbook.md](docs/local-demo-runbook.md) for the complete wo
 ## Phase 7A Orchestration Foundation
 
 Phase 7A adds an internal application service that coordinates existing Stack Overflow ingestion and analytics transformation workflows. It returns structured results with status, provider, timing, ingestion counts, duplicate counts, transformed snapshot counts, and a short message. Manual admin REST endpoints are intentionally deferred to Phase 7B.
+
+## Phase 7B Manual Orchestration Triggers
+
+Phase 7B exposes the orchestration service through opt-in local/demo REST endpoints. They are disabled by default with `tech-talent-pulse.admin.orchestration.enabled=false`.
+
+Enable them for a local demo run:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments="--tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+Available manual triggers:
+
+```bash
+curl -X POST http://localhost:8080/api/admin/orchestration/ingestion
+curl -X POST http://localhost:8080/api/admin/orchestration/transformation
+curl -X POST http://localhost:8080/api/admin/orchestration/pipeline
+```
+
+These endpoints are local operational tools. They do not add authentication, authorization, deployment infrastructure, or a production admin surface.
 
 ## Validation
 

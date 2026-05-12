@@ -138,3 +138,17 @@ Example response:
 - Responses are DTOs, not JPA entities.
 - Current data comes from Stack Overflow raw question signals transformed into daily snapshots.
 - Authentication, a public deployment, dashboard UI, and additional ingestion providers remain out of scope.
+
+## Optional Local Admin Orchestration
+
+Phase 7B adds local/demo manual orchestration triggers. They are disabled by default and require
+`tech-talent-pulse.admin.orchestration.enabled=true`.
+
+Routes:
+
+- `POST /api/admin/orchestration/ingestion`
+- `POST /api/admin/orchestration/transformation`
+- `POST /api/admin/orchestration/pipeline`
+
+These endpoints return status, provider, timestamps, ingestion counts, transformed snapshot count,
+and a short message. They are intended for local operational demos, not production exposure.
