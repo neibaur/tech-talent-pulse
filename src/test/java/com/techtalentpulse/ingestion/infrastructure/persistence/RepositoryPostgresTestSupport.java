@@ -9,6 +9,12 @@ final class RepositoryPostgresTestSupport {
 
   private RepositoryPostgresTestSupport() {}
 
+  static PostgreSQLContainer<?> startPostgres() {
+    PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+    postgres.start();
+    return postgres;
+  }
+
   static void registerPostgresProperties(
       DynamicPropertyRegistry registry, PostgreSQLContainer<?> postgres) {
     registry.add("spring.datasource.url", postgres::getJdbcUrl);

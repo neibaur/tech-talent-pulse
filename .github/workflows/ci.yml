@@ -29,6 +29,13 @@ jobs:
         run: |
           docker version
           docker info
+          docker ps
+
+      - name: Print CI commit context
+        run: |
+          git rev-parse HEAD
+          git status --short
+          find src/test/java -name '*RepositoryTest.java' -print
 
       - name: Build and verify
         run: mvn clean verify
