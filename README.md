@@ -2,23 +2,22 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 8 complete: analytics demo readiness**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
+Current status: **Phase 9A in progress: frontend foundation**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, a local smoke validation script, and a lightweight Astro frontend foundation for reviewers.
 
-## Current Project State After Phase 8C
+## Current Project State During Phase 9A
 
-Tech Talent Pulse is a backend-only analytics platform ready for Phase 9 frontend visualization work.
+Tech Talent Pulse is a backend analytics platform now gaining a lightweight Phase 9 frontend.
 It turns public Stack Overflow technology signals into explainable, recruiter-friendly trend
 intelligence through ingestion, raw persistence, daily transformation, read-only dashboard APIs,
 guarded local/demo orchestration, operational history, and Phase 8 analytics.
 
 Current intentional non-goals:
 
-- No frontend has been added yet; Phase 9 can focus on visualization over stable DTO responses.
-- No Kubernetes, production hosting, distributed microservices, or event streaming has been added.
 - No authentication or production admin surface exists yet; operational endpoints remain guarded
   local/demo tooling.
+- No Kubernetes, production hosting, distributed microservices, or event streaming has been added.
 - No opaque ML scoring has been added; analytics remain deterministic and explainable.
-- No heavy frontend complexity has been introduced before the backend contracts are proven.
+- No heavy frontend complexity has been introduced; the Phase 9A UI is a thin visualization layer.
 
 ## Value Proposition
 
@@ -163,6 +162,13 @@ Initial technology focus areas:
 - Clarify demo startup, empty-dataset expectations, and URL-safe comparison examples.
 - Polish analytics API documentation for future frontend handoff.
 
+### Phase 9A: Frontend Foundation
+
+- Add a lightweight Astro 6 frontend in `frontend/`.
+- Fetch existing Spring Boot analytics APIs through environment-driven API configuration.
+- Visualize rising technologies, trend summary data, and Java/Python/PostgreSQL comparison history.
+- Keep the UI frontend-only, auth-free, and intentionally small before Phase 9 expands the dashboard.
+
 ## Key Engineering Outcomes
 
 - Reproducible local development with Docker Compose PostgreSQL, Flyway migrations, and a documented demo profile.
@@ -174,10 +180,10 @@ Initial technology focus areas:
 
 ## Future Architecture Direction
 
-The next sensible increment is Phase 9 frontend visualization over the existing dashboard and
-analytics APIs. Later architecture work can add deployment preparation, hosted PostgreSQL,
+The current frontend foundation validates the dashboard shape over the existing APIs. Later
+architecture work can add richer visualization, deployment preparation, hosted PostgreSQL,
 additional providers, observability and metrics, authentication, and portfolio polish once the
-frontend validates the user workflows.
+frontend workflows are proven.
 
 ## Skills Demonstrated
 
@@ -359,6 +365,44 @@ snapshot data exists. For a full local demo, start PostgreSQL, run the app with 
 enable demo data and guarded admin orchestration, and run the smoke script. Phase 9 can build a
 frontend visualization layer over these stable DTO responses without changing the backend API shape.
 
+## Phase 9A Frontend Foundation
+
+Phase 9A adds a lightweight Astro frontend under `frontend/`. The frontend runs independently from
+the Spring Boot app, uses React only for the dashboard/chart island, and renders a Recharts line
+chart for tag comparison history.
+
+Default local ports:
+
+- Spring Boot API: `http://localhost:8080`
+- Astro frontend: `http://localhost:4321`
+
+Start the backend with demo data and guarded orchestration for a complete local walkthrough:
+
+```bash
+mvn spring-boot:run \
+  -Dspring-boot.run.profiles=demo \
+  -Dspring-boot.run.arguments="--tech-talent-pulse.demo-data.enabled=true --tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+Start the frontend in a separate terminal:
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
+
+The frontend reads from `PUBLIC_TECH_TALENT_PULSE_API_URL` and defaults to
+`http://localhost:8080`.
+
+```bash
+PUBLIC_TECH_TALENT_PULSE_API_URL="http://localhost:8080" pnpm run dev
+```
+
+Spring Boot allows the local Astro dev server origin by default through
+`TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, which defaults to `http://localhost:4321`. This is a
+local-development CORS setting, not a production CORS policy.
+
 ## Validation
 
 Current validation commands:
@@ -366,6 +410,7 @@ Current validation commands:
 - `mvn clean verify`
 - `mvn test`
 - `docker compose config`
+- `cd frontend && pnpm run build`
 
 GitHub Actions also validates pull requests and pushes to `main` with Maven verification, Docker Compose configuration checks, Gitleaks secret scanning, and CodeQL Java analysis. If GitHub default CodeQL setup is already enabled for this repository, disable default setup before relying on the committed CodeQL workflow to avoid duplicate analysis.
 

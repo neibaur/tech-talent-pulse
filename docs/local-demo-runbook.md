@@ -8,6 +8,8 @@ endpoints.
 
 - Java 21
 - Maven
+- Node.js 20 or newer
+- pnpm
 - Docker Desktop or another Docker environment with Compose support
 
 ## 1. Review Local Docker Database Defaults
@@ -287,7 +289,62 @@ Troubleshooting:
   logs and recent run history. The smoke script validates the local API surface, not external source
   availability.
 
-## 8. Troubleshooting Quick Reference
+## 8. Run The Astro Frontend
+
+The Phase 9A frontend is a lightweight Astro app in `frontend/`. It runs independently from the
+Spring Boot backend and defaults to the local API at `http://localhost:8080`.
+
+Start the backend first with demo data and guarded orchestration enabled:
+
+```bash
+mvn spring-boot:run \
+  -Dspring-boot.run.profiles=demo \
+  -Dspring-boot.run.arguments="--tech-talent-pulse.demo-data.enabled=true --tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+Then start the frontend in another terminal:
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
+
+Open:
+
+```text
+http://localhost:4321
+```
+
+The dashboard calls:
+
+- `GET /api/analytics/trends/rising`
+- `GET /api/trends/summary`
+- `GET /api/analytics/trends/compare?tags=java,python,postgresql`
+
+Optional frontend API override:
+
+```bash
+PUBLIC_TECH_TALENT_PULSE_API_URL="http://localhost:8080" pnpm run dev
+```
+
+The backend allows the Astro dev server through a local-development CORS setting:
+
+- `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, default `http://localhost:4321`
+
+Frontend troubleshooting:
+
+- If the dashboard says the backend API is unavailable, confirm the Spring Boot app is running and
+  `curl "http://localhost:8080/actuator/health"` returns `200`.
+- If the browser console shows CORS errors, confirm the frontend is running from
+  `http://localhost:4321` or set `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS` to the active local
+  frontend origin.
+- If cards or charts are empty, run demo seeding or trigger the pipeline so transformed snapshots
+  exist. Empty analytics data is valid when the database has no snapshot history.
+- If the Astro dev server uses another port, update the backend CORS origin before refreshing the
+  browser.
+
+## 9. Troubleshooting Quick Reference
 
 | Symptom | Likely Root Cause | Quick Validation | Recommended Fix |
 | --- | --- | --- | --- |
@@ -298,8 +355,9 @@ Troubleshooting:
 | Admin orchestration endpoints return `404`. | Guard property is disabled. | Check startup command for `tech-talent-pulse.admin.orchestration.enabled=true`. | Restart with the property enabled for local/demo operational use. |
 | Compare endpoint fails when a URL contains spaces. | Client/server URL parsing rejected unencoded whitespace before application normalization. | Retry with `tags=Java,PYTHON,java`. | Use URL-safe query strings or encode spaces if a client emits them. |
 | Smoke script fails to connect. | App is not running on the expected base URL. | Call `curl "http://localhost:8080/actuator/health"`. | Start the app or set `BASE_URL` to the active local port. |
+| Frontend shows an API unavailable message. | Backend is stopped, API URL is wrong, or local CORS origin does not match. | Check the browser console and call `/actuator/health`. | Start the backend, set `PUBLIC_TECH_TALENT_PULSE_API_URL`, or align `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`. |
 
-## 9. Phase 7 Operational Summary
+## 10. Phase 7 Operational Summary
 
 Phase 7 is now a local operational demo layer over the existing backend:
 
@@ -315,7 +373,7 @@ Known limitations remain intentional for this portfolio increment:
 - There is no queue, scheduler change, frontend, deployment infrastructure, or additional provider.
 - History readback uses existing `ingestion_run` data rather than a new job-history model.
 
-## 10. Phase 8 Analytics Summary
+## 11. Phase 8 Analytics Summary
 
 Phase 8 is now complete as a backend/API-only analytics layer:
 
@@ -326,7 +384,17 @@ Phase 8 is now complete as a backend/API-only analytics layer:
 Phase 9 can focus on frontend visualization over these existing DTO responses. Operational/admin
 endpoints remain guarded and are still local/demo tooling, not production-authenticated admin APIs.
 
-## 11. Run Validation
+## 12. Phase 9A Frontend Summary
+
+Phase 9A begins frontend visualization without changing backend API contracts:
+
+- Astro 6 provides the static-friendly frontend foundation.
+- React is limited to the dashboard/chart island.
+- Recharts renders comparison history from the existing chart-ready API response.
+- The UI includes loading, empty, and backend-unavailable states for local demos.
+- The frontend is not authenticated and should not be treated as production hosting.
+
+## 13. Run Validation
 
 Run the full local validation gate:
 
@@ -335,6 +403,13 @@ mvn clean verify
 ```
 
 This executes tests, Spotless checks, JaCoCo report generation, and the JaCoCo coverage gate.
+
+Run the frontend build check:
+
+```bash
+cd frontend
+pnpm run build
+```
 
 View local coverage reports:
 
