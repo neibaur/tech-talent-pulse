@@ -1,7 +1,7 @@
 # Local Demo Runbook
 
 This runbook shows how a reviewer can start PostgreSQL, run the API locally, load explicit demo data,
-and verify the read-only dashboard endpoints.
+trigger the local operational workflow, and verify the dashboard and admin readback endpoints.
 
 ## Prerequisites
 
@@ -181,17 +181,84 @@ The run history endpoint helps troubleshoot local ingestion runs by showing rece
 timestamps, counts, and error messages without exposing raw payloads. These endpoints are local/demo
 operational tools. They are not production-authenticated admin APIs.
 
-## 7. Lightweight API Smoke Test
+## 7. Local Operational Smoke Validation
 
-After the app starts with the `demo` profile, these commands should return HTTP 200:
+After PostgreSQL is running and the app starts with admin orchestration enabled, run the local smoke
+script from a Linux shell or Git Bash on Windows:
 
 ```bash
-curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends?limit=5"
-curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/java?limit=3"
-curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/summary?limit=5"
+bash scripts/smoke-local-demo.sh
 ```
 
-## 8. Run Validation
+The script assumes this app startup shape:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments="--tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+It checks:
+
+- `GET /actuator/health`
+- `GET /api/trends`
+- `GET /api/trends/summary`
+- `POST /api/admin/orchestration/ingestion`
+- `POST /api/admin/orchestration/transformation`
+- `POST /api/admin/orchestration/pipeline`
+- `GET /api/admin/orchestration/runs?limit=10`
+
+Expected result: every check prints `PASS` and the script exits with status `0`.
+
+Optionally point the script at another local port:
+
+```bash
+BASE_URL="http://localhost:8081" bash scripts/smoke-local-demo.sh
+```
+
+Manual equivalent curl checks:
+
+After the app starts with the `demo` profile and admin orchestration enabled, these commands should
+return HTTP 200:
+
+```bash
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/actuator/health"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends?limit=5"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/summary?limit=5"
+curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/ingestion"
+curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/transformation"
+curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/pipeline"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/admin/orchestration/runs?limit=10"
+```
+
+Troubleshooting:
+
+- If the script cannot connect, confirm the app is running on the expected port.
+- If admin endpoints return `404`, restart the app with
+  `--tech-talent-pulse.admin.orchestration.enabled=true`.
+- If startup fails on datasource or Flyway initialization, confirm PostgreSQL is running with
+  `docker compose up -d postgres`.
+- If local data looks stale, stop the app, reset the local Compose volume if appropriate, restart
+  PostgreSQL, and rerun the demo seeding or orchestration flow.
+- If an orchestration response has status `FAILED` while the HTTP status is `200`, inspect the app
+  logs and recent run history. The smoke script validates the local API surface, not external source
+  availability.
+
+## 8. Phase 7 Operational Summary
+
+Phase 7 is now a local operational demo layer over the existing backend:
+
+- Phase 7A added synchronous orchestration for ingestion, transformation, and combined pipeline runs.
+- Phase 7B added guarded manual trigger endpoints.
+- Phase 7C added guarded recent ingestion run history readback.
+- Phase 7D added a curl-based smoke validation script and final runbook polish.
+
+Known limitations remain intentional for this portfolio increment:
+
+- Admin endpoints are local/demo tools, not production-authenticated APIs.
+- Orchestration remains synchronous and request-scoped.
+- There is no queue, scheduler change, frontend, deployment infrastructure, or additional provider.
+- History readback uses existing `ingestion_run` data rather than a new job-history model.
+
+## 9. Run Validation
 
 Run the full local validation gate:
 
@@ -218,7 +285,9 @@ The current line coverage gate is `80%` at the Maven bundle level.
 - Manual orchestration trigger endpoints are disabled unless explicitly enabled.
 - Operational history readback is disabled unless manual orchestration endpoints are explicitly
   enabled.
+- The smoke validation script calls only the local app base URL.
 - No Flyway migration inserts demo data.
-- No external API calls are required for the demo workflow.
+- Demo seeding and dashboard readback do not require external API calls; manual ingestion triggers
+  may call the configured provider through the running app.
 - No production secrets or credential values are stored in demo configuration.
 - The demo seeder uses repository and transformation paths instead of raw SQL inserts.
