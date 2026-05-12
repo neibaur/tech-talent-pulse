@@ -41,6 +41,7 @@ Exact metrics will be documented before implementation and should include limita
 - Stack Exchange API ingestion for Stack Overflow question payloads.
 - Daily tag-level analytics snapshots for Stack Overflow questions.
 - Read-only REST endpoints for dashboard-ready trend snapshots and summaries.
+- Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - PostgreSQL persistence.
 - Repeatable ETL workflow design.
 - Raw source capture with duplicate avoidance where practical.
@@ -55,9 +56,10 @@ Exact metrics will be documented before implementation and should include limita
 - Real-time streaming requirements.
 - Predictive hiring recommendations.
 - Multi-tenant product features.
-- Additional providers during Phase 5.
-- Dashboard UI during Phase 5.
-- GitHub API ingestion during Phase 5.
+- Additional providers during Phase 6.
+- Dashboard UI during Phase 6.
+- GitHub API ingestion during Phase 6.
+- Authentication, public deployment, and production infrastructure during Phase 6.
 
 ## Success Criteria
 

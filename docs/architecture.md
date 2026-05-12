@@ -68,6 +68,16 @@ The dashboard API layer exposes read-only views over analytics snapshots:
 
 The controller layer does not expose JPA entities directly. It delegates query behavior to application services and returns HTTP 200 with empty collections for empty dashboard data. Authentication is intentionally deferred until a later phase with a defined security model.
 
+## Phase 6 Demo Readiness
+
+Phase 6 keeps the architecture backend-only and local-demo focused:
+
+- API documentation is static Markdown under `docs/` rather than a runtime OpenAPI dependency.
+- Demo data is enabled only by the explicit `demo` Spring profile.
+- Demo seeding writes sample raw Stack Overflow-like signals through repositories and then invokes the existing analytics transformation service.
+- Flyway migrations remain production-safe and do not insert demo-only records.
+- Dashboard controllers continue returning DTOs rather than persistence entities.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -77,7 +87,8 @@ Planned MVP data flow:
 3. Persist raw source payloads for later transformation.
 4. Transform raw records into daily metric snapshots.
 5. Serve recruiter-friendly trend data through read-only REST endpoints.
-6. Present dashboard views that include context and limitations in a later UI phase.
+6. Seed explicit local demo data for reviewer walkthroughs when the `demo` profile is active.
+7. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 
