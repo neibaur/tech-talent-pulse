@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 2 Stack Overflow ingestion foundation**. This repository now contains the Maven/Spring Boot foundation plus the first raw ingestion path for Stack Exchange API question signals from Stack Overflow.
+Current status: **Phase 3 analytics transformations**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, and an initial analytics transformation layer for daily tag-level trend snapshots.
 
 ## Value Proposition
 
@@ -121,7 +121,18 @@ Phase 2 adds a lightweight hexagonal ingestion slice for Stack Overflow question
 - `raw_technology_signal` stores raw JSON question payloads only.
 - The scheduled job is disabled by default and must be enabled through configuration.
 
-No dashboard, analytics tables, GitHub ingestion, Kafka/event streaming, authentication, or transformation layer has been added.
+Phase 2 intentionally stopped at raw capture before analytics, dashboard UI, GitHub ingestion, Kafka/event streaming, or authentication.
+
+## Phase 3 Analytics Transformations
+
+Phase 3 adds the first analytics-ready table and transformation service:
+
+- `TechnologyTrendTransformationService` reads raw Stack Overflow question payloads.
+- Stack Overflow `creation_date` values are normalized to UTC daily snapshot dates.
+- Daily tag/provider snapshots include signal count, average score, and average answer count.
+- `technology_trend_snapshot` stores one row per provider, tag, and snapshot date.
+
+No REST APIs, dashboard UI, additional providers, Kafka/event streaming, or authentication stack has been added.
 
 ## Validation
 

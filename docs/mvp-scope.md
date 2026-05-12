@@ -4,7 +4,7 @@ The first MVP for Tech Talent Pulse begins with Stack Overflow question data fro
 
 ## MVP Goal
 
-Build a governed ETL flow that collects public technology signals for selected technologies, stores raw source payloads safely, and prepares the project for later analytics-ready metrics and recruiter-friendly dashboard views.
+Build a governed ETL flow that collects public technology signals for selected technologies, stores raw source payloads safely, and transforms them into analytics-ready metrics for later recruiter-friendly dashboard views.
 
 ## Initial Technology Set
 
@@ -21,6 +21,7 @@ The MVP may evaluate public Stack Overflow signals such as:
 - Recent question volume by tag.
 - Question creation timestamps.
 - Stack Overflow tags associated with each question.
+- Average question score and answer count by tag and day.
 - Source freshness and collection timestamp.
 
 Later phases may add GitHub signals such as:
@@ -38,6 +39,7 @@ Exact metrics will be documented before implementation and should include limita
 - Java 21 and Spring Boot application foundation.
 - Maven-based build and validation.
 - Stack Exchange API ingestion for Stack Overflow question payloads.
+- Daily tag-level analytics snapshots for Stack Overflow questions.
 - PostgreSQL persistence.
 - Repeatable ETL workflow design.
 - Raw source capture with duplicate avoidance where practical.
@@ -52,9 +54,9 @@ Exact metrics will be documented before implementation and should include limita
 - Real-time streaming requirements.
 - Predictive hiring recommendations.
 - Multi-tenant product features.
-- Analytics transformations during Phase 2.
-- Dashboard UI during Phase 2.
-- GitHub API ingestion during Phase 2.
+- Additional providers during Phase 3.
+- Dashboard UI during Phase 3.
+- GitHub API ingestion during Phase 3.
 
 ## Success Criteria
 

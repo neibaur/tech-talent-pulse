@@ -80,7 +80,23 @@ public class RawTechnologySignalEntity {
     return providerId;
   }
 
+  public IngestionProvider getProvider() {
+    return provider;
+  }
+
+  public SignalType getSignalType() {
+    return signalType;
+  }
+
   public String getSourceTag() {
     return sourceTag;
+  }
+
+  public String getPayload() {
+    return payload;
+  }
+
+  public Instant getCapturedAt() {
+    return capturedAt;
   }
 }

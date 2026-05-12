@@ -3,6 +3,7 @@ package com.techtalentpulse;
 import com.techtalentpulse.ingestion.application.StackOverflowQuestionClient;
 import com.techtalentpulse.ingestion.infrastructure.persistence.IngestionRunRepository;
 import com.techtalentpulse.ingestion.infrastructure.persistence.RawTechnologySignalRepository;
+import com.techtalentpulse.transformation.infrastructure.persistence.TechnologyTrendSnapshotRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -26,6 +27,8 @@ class TechTalentPulseApplicationTests {
   @MockitoBean private IngestionRunRepository ingestionRunRepository;
 
   @MockitoBean private RawTechnologySignalRepository rawTechnologySignalRepository;
+
+  @MockitoBean private TechnologyTrendSnapshotRepository technologyTrendSnapshotRepository;
 
   @Test
   void contextLoads() {}
