@@ -49,6 +49,7 @@ data/local/
 data/dumps/
 *.dump
 *.sql
+!src/main/resources/db/migration/*.sql
 *.sqlite
 *.db
 

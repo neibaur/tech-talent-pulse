@@ -6,7 +6,7 @@ This file defines repository expectations for human contributors and AI-assisted
 
 Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard portfolio project. It will use Maven, PostgreSQL, and a lightweight hexagonal architecture to transform public technology-signal data into recruiter-friendly trend intelligence.
 
-The repository is currently in Phase 1. Application foundation code is allowed, but GitHub ingestion, ETL business logic, dashboard UI, external API clients, entities, repositories, and services should wait for later scoped phases.
+The repository is currently in Phase 2. Stack Overflow raw ingestion foundation code is allowed. Dashboard UI, analytics transformations, GitHub ingestion, Kafka/event streaming, authentication/security stack, and additional external clients should wait for later scoped phases.
 
 ## Atomic Commit Policy
 
@@ -55,6 +55,8 @@ When application code is introduced:
 - Keep adapters, application services, and domain concepts separated.
 - Prefer constructor injection for Spring-managed dependencies.
 - Avoid hidden network calls in unit tests.
+- Prefer Spring `RestClient` for synchronous HTTP integrations.
+- Keep raw ingestion separate from analytics transformations.
 
 ## Linter Enforcement Expectations
 
@@ -80,13 +82,15 @@ When implementation begins:
 
 ## Validation Commands
 
-Phase 1 executable validation commands:
+Current executable validation commands:
 
 - `mvn clean verify`
 - `mvn test`
 - `docker compose config`
 
 `mvn clean verify` runs the Maven build, tests, Spotless checks, and JaCoCo report generation.
+
+PostgreSQL repository integration tests use Testcontainers and should run in Docker-enabled environments. They may be skipped locally when Docker is unavailable, but CI should provide Docker so those tests exercise PostgreSQL.
 
 GitHub Actions validation should remain aligned with local validation:
 
@@ -113,6 +117,7 @@ Codex should:
 - Keep changes scoped to the user request.
 - Preserve user changes and avoid reverting unrelated work.
 - Keep Phase 1 application code limited to the Spring Boot foundation unless a later task explicitly expands scope.
+- Keep Phase 2 ingestion limited to raw Stack Overflow question capture unless a later task explicitly expands scope.
 - Use Maven assumptions for future Java validation and examples.
 - Use the documented Maven and Docker Compose validation commands when relevant.
 - Use environment variable names only when discussing secrets.

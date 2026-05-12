@@ -25,8 +25,28 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Check Docker availability
+        run: |
+          docker version
+          docker info
+          docker ps
+
+      - name: Print CI commit context
+        run: |
+          git rev-parse HEAD
+          git status --short
+          find src/test/java -name '*RepositoryTest.java' -print
+
       - name: Build and verify
         run: mvn clean verify
+
+      - name: Upload Surefire reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
+          if-no-files-found: ignore
 
       - name: Validate Docker Compose config
         run: docker compose config
