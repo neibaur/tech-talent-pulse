@@ -24,7 +24,7 @@ The Phase 1 foundation follows Maven conventions:
 - `src/test/java`
 - `src/test/resources`
 
-Current application code includes the Spring Boot entry point, application configuration, Flyway migrations, a basic context load test, and a raw Stack Overflow ingestion foundation.
+Current application code includes the Spring Boot entry point, application configuration, Flyway migrations, a basic context load test, a raw Stack Overflow ingestion foundation, and the first analytics transformation slice.
 
 ## Phase 1 Runtime Foundation
 
@@ -34,7 +34,7 @@ Current application code includes the Spring Boot entry point, application confi
 - Hibernate is configured to validate schema state, not create or update it.
 - PostgreSQL is the only configured database target.
 - Testcontainers supports PostgreSQL repository integration tests.
-- No controllers, dashboard UI, authentication, Kafka/event streaming, GitHub ingestion, or analytics transformation tables are implemented yet.
+- No controllers, dashboard UI, authentication, Kafka/event streaming, or GitHub ingestion are implemented yet.
 
 ## Phase 2 Ingestion Foundation
 
@@ -48,6 +48,16 @@ The first ingestion source is Stack Overflow question activity through the Stack
 
 Raw source records are persisted before any transformation. The `raw_technology_signal` table intentionally stores only provider metadata, source tag, raw JSON payload, and capture time.
 
+## Phase 3 Analytics Transformation Foundation
+
+The first transformation slice converts raw Stack Overflow question signals into daily tag-level trend snapshots:
+
+- `transformation/domain`: lightweight metric records used by the transformation workflow.
+- `transformation/application`: orchestration for reading raw payloads, parsing JSON with Jackson, grouping by provider/tag/UTC date, and calculating simple averages.
+- `transformation/infrastructure/persistence`: JPA entity and repository for the Flyway-managed `technology_trend_snapshot` table.
+
+The analytics table is intentionally narrow and dashboard-ready. It stores signal count, average score, average answer count, and capture time for one provider/tag/snapshot date combination.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -55,7 +65,7 @@ Planned MVP data flow:
 1. Fetch public Stack Overflow question data for selected technology tags.
 2. Normalize source data into stable internal records.
 3. Persist raw source payloads for later transformation.
-4. Transform raw records into metric snapshots in a later phase.
+4. Transform raw records into daily metric snapshots.
 5. Present recruiter-friendly summaries that include context and limitations.
 
 ## Design Principles
