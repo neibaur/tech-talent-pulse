@@ -43,6 +43,7 @@ Exact metrics will be documented before implementation and should include limita
 - Read-only REST endpoints for dashboard-ready trend snapshots and summaries.
 - Read-only advanced analytics endpoints for trend deltas and rising technology insights.
 - Read-only tag comparison analytics for two to five technologies.
+- Analytics demo readiness and smoke validation for local reviewer workflows.
 - Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - Internal orchestration service for coordinating ingestion and transformation.
 - Opt-in local/demo manual orchestration trigger endpoints.
@@ -74,6 +75,8 @@ Exact metrics will be documented before implementation and should include limita
   infrastructure during Phase 8A.
 - Frontend, second data provider, authentication changes, moving averages, smoothing, forecasts,
   and production infrastructure during Phase 8B.
+- Frontend, second data provider, authentication changes, runtime OpenAPI dependency, and production
+  infrastructure during Phase 8C.
 
 ## Success Criteria
 

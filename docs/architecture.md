@@ -134,6 +134,17 @@ repository query for the requested tag history, preserves requested tag order, a
 The endpoint remains backend/API-only. No frontend, provider, authentication, deployment, queueing,
 or new persistence table is introduced.
 
+## Phase 8C Analytics Demo Readiness
+
+Phase 8C closes Phase 8 by improving demo validation and API handoff documentation. The local smoke
+script now exercises dashboard reads, Phase 8 analytics reads, guarded orchestration triggers, and
+run history without asserting exact dataset values. Empty analytics responses remain valid when no
+transformed snapshots exist.
+
+No runtime OpenAPI/Swagger dependency is present, so endpoint documentation remains static Markdown.
+Phase 8 analytics continue to compare UTC-normalized `snapshotDate` values produced by the Phase 3
+transformation path; no local-time calculations are introduced in the analytics layer.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -151,7 +162,8 @@ Planned MVP data flow:
 11. Calculate latest-versus-previous trend deltas and rising technology insights.
 12. Compare two to five requested tags with latest metrics, deltas, rank movement, and bounded
     history.
-13. Present dashboard views that include context and limitations in a later UI phase.
+13. Validate dashboard, analytics, and guarded operational endpoints through the local smoke script.
+14. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

@@ -1,7 +1,8 @@
 # Local Demo Runbook
 
 This runbook shows how a reviewer can start PostgreSQL, run the API locally, load explicit demo data,
-trigger the local operational workflow, and verify the dashboard and admin readback endpoints.
+trigger the local operational workflow, and verify dashboard, analytics, and admin readback
+endpoints.
 
 ## Prerequisites
 
@@ -75,6 +76,19 @@ The seeded records are clearly marked in raw payload titles as demo sample data.
 The seeder is idempotent for its provider IDs, so restarting the app with the `demo` profile should
 not duplicate raw demo signals.
 
+To run the complete analytics demo flow, start the app with demo data and guarded admin
+orchestration enabled:
+
+```bash
+mvn spring-boot:run \
+  -Dspring-boot.run.profiles=demo \
+  -Dspring-boot.run.arguments="--tech-talent-pulse.demo-data.enabled=true --tech-talent-pulse.admin.orchestration.enabled=true"
+```
+
+Demo data and transformation are required before the dashboard and analytics endpoints can return
+non-empty results. Empty arrays or empty comparison histories are valid when no transformed
+`technology_trend_snapshot` rows exist yet.
+
 ## 5. Call The API
 
 Recent trend snapshots:
@@ -94,6 +108,26 @@ Summary:
 ```bash
 curl "http://localhost:8080/api/trends/summary?limit=5"
 ```
+
+Trend deltas:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/deltas?limit=10"
+```
+
+Rising technologies:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/rising?limit=5"
+```
+
+Tag comparison:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/compare?tags=Java,PYTHON,java"
+```
+
+Use URL-safe query strings for tag comparison. Do not rely on unencoded spaces inside URLs.
 
 Health check:
 
@@ -175,6 +209,9 @@ After a trigger completes, verify the app and dashboard data:
 curl "http://localhost:8080/actuator/health"
 curl "http://localhost:8080/api/trends"
 curl "http://localhost:8080/api/trends/summary"
+curl "http://localhost:8080/api/analytics/trends/deltas"
+curl "http://localhost:8080/api/analytics/trends/rising"
+curl "http://localhost:8080/api/analytics/trends/compare?tags=java,python"
 ```
 
 The run history endpoint helps troubleshoot local ingestion runs by showing recent statuses,
@@ -201,6 +238,9 @@ It checks:
 - `GET /actuator/health`
 - `GET /api/trends`
 - `GET /api/trends/summary`
+- `GET /api/analytics/trends/deltas`
+- `GET /api/analytics/trends/rising`
+- `GET /api/analytics/trends/compare?tags=java,python`
 - `POST /api/admin/orchestration/ingestion`
 - `POST /api/admin/orchestration/transformation`
 - `POST /api/admin/orchestration/pipeline`
@@ -223,6 +263,9 @@ return HTTP 200:
 curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/actuator/health"
 curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends?limit=5"
 curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/summary?limit=5"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/analytics/trends/deltas"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/analytics/trends/rising"
+curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/analytics/trends/compare?tags=java,python"
 curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/ingestion"
 curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/transformation"
 curl -o /dev/null -s -w "%{http_code}\n" -X POST "http://localhost:8080/api/admin/orchestration/pipeline"
@@ -238,6 +281,8 @@ Troubleshooting:
   `docker compose up -d postgres`.
 - If local data looks stale, stop the app, reset the local Compose volume if appropriate, restart
   PostgreSQL, and rerun the demo seeding or orchestration flow.
+- If dashboard or analytics endpoints return empty arrays or empty histories, run demo seeding or
+  trigger transformation/pipeline so transformed snapshots exist.
 - If an orchestration response has status `FAILED` while the HTTP status is `200`, inspect the app
   logs and recent run history. The smoke script validates the local API surface, not external source
   availability.
@@ -258,7 +303,18 @@ Known limitations remain intentional for this portfolio increment:
 - There is no queue, scheduler change, frontend, deployment infrastructure, or additional provider.
 - History readback uses existing `ingestion_run` data rather than a new job-history model.
 
-## 9. Run Validation
+## 9. Phase 8 Analytics Summary
+
+Phase 8 is now complete as a backend/API-only analytics layer:
+
+- Phase 8A added trend deltas and rising technology endpoints.
+- Phase 8B added chart-ready tag comparison analytics.
+- Phase 8C extended smoke validation and polished analytics demo documentation.
+
+Phase 9 can focus on frontend visualization over these existing DTO responses. Operational/admin
+endpoints remain guarded and are still local/demo tooling, not production-authenticated admin APIs.
+
+## 10. Run Validation
 
 Run the full local validation gate:
 

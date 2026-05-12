@@ -23,6 +23,9 @@ The optional `limit` query parameter is normalized by the application:
 - Summary top-tag results default to `5`.
 - Advanced analytics endpoints default to `25` and cap at `100`.
 
+Analytics responses may be empty when no transformed snapshot data exists. Run demo seeding or the
+local orchestration pipeline before expecting non-empty dashboard or analytics results.
+
 ## GET /api/trends
 
 Returns recent trend snapshots ordered by newest snapshot date first, then tag.
@@ -58,6 +61,12 @@ Example response:
     "averageAnswerCount": 5.0
   }
 ]
+```
+
+Empty-data response:
+
+```json
+[]
 ```
 
 ## GET /api/trends/{tag}
@@ -102,6 +111,25 @@ Example response:
 ]
 ```
 
+Null-safe response example for a tag without meaningful prior data:
+
+```json
+[
+  {
+    "tag": "python",
+    "currentSnapshotDate": "2026-05-10",
+    "previousSnapshotDate": "2026-05-09",
+    "currentSignalCount": 4,
+    "previousSignalCount": 0,
+    "absoluteDelta": 4,
+    "percentChange": null,
+    "currentRank": 4,
+    "previousRank": 5,
+    "rankMovement": 1
+  }
+]
+```
+
 ## GET /api/trends/summary
 
 Returns the most recent snapshot date and the top tags by total signal count.
@@ -129,6 +157,51 @@ Example response:
     {
       "tag": "spring-boot",
       "signalCount": 2
+    }
+  ]
+}
+```
+
+Missing-tag response example:
+
+```json
+{
+  "tags": [
+    {
+      "requestedTag": "java",
+      "normalizedTag": "java",
+      "found": true,
+      "latestMetrics": {
+        "snapshotDate": "2026-05-10",
+        "signalCount": 20,
+        "averageScore": 4.5,
+        "averageAnswerCount": 2.0,
+        "currentRank": 1
+      },
+      "deltaMetrics": {
+        "previousSnapshotDate": null,
+        "previousSignalCount": 0,
+        "absoluteDelta": 20,
+        "percentChange": null,
+        "previousRank": null,
+        "rankMovement": null
+      },
+      "history": [
+        {
+          "snapshotDate": "2026-05-10",
+          "signalCount": 20,
+          "averageScore": 4.5,
+          "averageAnswerCount": 2.0
+        }
+      ]
+    },
+    {
+      "requestedTag": "missing-tag",
+      "normalizedTag": "missing-tag",
+      "found": false,
+      "latestMetrics": null,
+      "deltaMetrics": null,
+      "history": []
     }
   ]
 }
@@ -294,6 +367,10 @@ Response notes:
 - Rank metrics are calculated against all tags available on the relevant snapshot date.
 - The response is grouped per tag so a future frontend can render summary cards and time-series
   charts without reshaping the API contract.
+- Use URL-safe query values, for example `tags=Java,PYTHON,java`. Unencoded spaces in URLs are not
+  part of the supported contract.
+- Snapshot dates come from UTC-normalized daily transformation output; Phase 8 analytics compare
+  those stored snapshot dates and do not introduce local-time calculations.
 
 ## Optional Local Admin Orchestration
 
@@ -319,5 +396,6 @@ When the app is running locally with admin orchestration enabled, validate the d
 bash scripts/smoke-local-demo.sh
 ```
 
-The script checks the health endpoint, read-only dashboard endpoints, manual orchestration triggers,
-and recent run history. It uses curl only and does not require additional dependencies.
+The script checks the health endpoint, read-only dashboard endpoints, Phase 8 analytics endpoints,
+manual orchestration triggers, and recent run history. It uses curl only and does not require
+additional dependencies.
