@@ -1,6 +1,5 @@
 package com.techtalentpulse.ingestion.infrastructure.persistence;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -9,23 +8,6 @@ final class RepositoryPostgresTestSupport {
   private static final String APPLICATION_SCHEMA = "tech_talent_pulse";
 
   private RepositoryPostgresTestSupport() {}
-
-  static PostgreSQLContainer<?> startPostgres() {
-    PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
-    postgres.start();
-    migrate(postgres);
-    return postgres;
-  }
-
-  private static void migrate(PostgreSQLContainer<?> postgres) {
-    Flyway.configure()
-        .dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
-        .locations("classpath:db/migration")
-        .schemas(APPLICATION_SCHEMA)
-        .defaultSchema(APPLICATION_SCHEMA)
-        .load()
-        .migrate();
-  }
 
   static void registerPostgresProperties(
       DynamicPropertyRegistry registry, PostgreSQLContainer<?> postgres) {

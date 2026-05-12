@@ -14,14 +14,18 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.NONE,
     properties = "tech-talent-pulse.stack-exchange.scheduler-enabled=false")
+@Testcontainers(disabledWithoutDocker = true)
 @Transactional
 class RawTechnologySignalRepositoryTest {
 
-  static final PostgreSQLContainer<?> postgres = RepositoryPostgresTestSupport.startPostgres();
+  @Container
+  static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
 
   @DynamicPropertySource
   static void registerPostgresProperties(DynamicPropertyRegistry registry) {
