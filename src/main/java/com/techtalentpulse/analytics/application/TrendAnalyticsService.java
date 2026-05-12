@@ -249,7 +249,8 @@ public class TrendAnalyticsService {
 
   private List<RequestedTag> normalizeCompareTags(List<String> requestedTags) {
     if (requestedTags == null) {
-      throw new IllegalArgumentException("At least two tags are required.");
+      throw new IllegalArgumentException(
+          "Compare requires two to five unique tags in the tags query parameter.");
     }
 
     Map<String, String> normalizedTags = new LinkedHashMap<>();
@@ -262,10 +263,10 @@ public class TrendAnalyticsService {
     }
 
     if (normalizedTags.size() < MIN_COMPARE_TAGS) {
-      throw new IllegalArgumentException("At least two unique tags are required.");
+      throw new IllegalArgumentException("Compare requires at least two unique non-blank tags.");
     }
     if (normalizedTags.size() > MAX_COMPARE_TAGS) {
-      throw new IllegalArgumentException("At most five unique tags can be compared.");
+      throw new IllegalArgumentException("Compare supports at most five unique tags.");
     }
 
     List<RequestedTag> tags = new ArrayList<>();

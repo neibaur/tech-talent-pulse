@@ -14,6 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/analytics/trends")
 public class TrendAnalyticsController {
 
+  private static final String MISSING_COMPARE_TAGS_MESSAGE =
+      "Compare requires two to five unique tags in the tags query parameter.";
+
   private final TrendAnalyticsService trendAnalyticsService;
 
   public TrendAnalyticsController(TrendAnalyticsService trendAnalyticsService) {
@@ -49,7 +52,7 @@ public class TrendAnalyticsController {
 
   private List<String> parseTags(String tags) {
     if (tags == null || tags.trim().isEmpty()) {
-      throw new IllegalArgumentException("At least two tags are required.");
+      throw new IllegalArgumentException(MISSING_COMPARE_TAGS_MESSAGE);
     }
     return List.of(tags.split(","));
   }

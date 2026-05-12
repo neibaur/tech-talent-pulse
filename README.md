@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 8B tag comparison analytics**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
+Current status: **Phase 8 complete: analytics demo readiness**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta, rising technology, and tag comparison APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
 
 ## Value Proposition
 
@@ -128,6 +128,12 @@ Initial technology focus areas:
 - Add read-only comparison analytics for two to five requested tags.
 - Return chart-ready per-tag summaries, delta metrics, and bounded historical series.
 - Preserve requested tag ordering while handling duplicates and missing tags predictably.
+
+### Phase 8C: Analytics Demo Readiness
+
+- Extend local smoke validation to cover the Phase 8 analytics endpoints.
+- Clarify demo startup, empty-dataset expectations, and URL-safe comparison examples.
+- Polish analytics API documentation for future frontend handoff.
 
 ## Key Engineering Outcomes
 
@@ -304,6 +310,19 @@ curl "http://localhost:8080/api/analytics/trends/compare?tags=java,python,postgr
 ```
 
 The endpoint accepts two to five unique tags, normalizes whitespace and case, preserves requested tag order, and returns one comparison object per requested tag. Each object includes latest metrics when available, tag-local delta metrics against the previous point for that tag, and up to 30 recent historical snapshot points. Missing tags are returned with `found=false` instead of failing the request.
+
+## Phase 8C Analytics Demo Readiness
+
+Phase 8C closes the backend analytics increment. The smoke script now validates:
+
+- `GET /api/analytics/trends/deltas`
+- `GET /api/analytics/trends/rising`
+- `GET /api/analytics/trends/compare?tags=java,python`
+
+Analytics endpoints return HTTP 200 with empty collections or empty histories when no transformed
+snapshot data exists. For a full local demo, start PostgreSQL, run the app with the `demo` profile,
+enable demo data and guarded admin orchestration, and run the smoke script. Phase 9 can build a
+frontend visualization layer over these stable DTO responses without changing the backend API shape.
 
 ## Validation
 

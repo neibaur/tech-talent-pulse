@@ -203,14 +203,17 @@ class TrendAnalyticsServiceTest {
   @Test
   void rejectsInvalidCompareTagRequests() {
     assertThatThrownBy(() -> service.compareTags(List.of()))
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Compare requires at least two unique non-blank tags.");
     assertThatThrownBy(() -> service.compareTags(List.of("java")))
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Compare requires at least two unique non-blank tags.");
     assertThatThrownBy(
             () ->
                 service.compareTags(
                     List.of("java", "docker", "kubernetes", "python", "go", "rust")))
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Compare supports at most five unique tags.");
   }
 
   private TechnologyTrendSnapshotEntity snapshot(
