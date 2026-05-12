@@ -46,39 +46,67 @@ public class StackOverflowIngestionService {
     IngestionRunEntity run =
         ingestionRunRepository.save(
             new IngestionRunEntity(
-                IngestionProvider.STACK_OVERFLOW, IngestionRunStatus.RUNNING, Instant.now(clock)));
+                IngestionProvider.STACK_OVERFLOW, IngestionRunStatus.STARTED, Instant.now(clock)));
+    LOGGER.info(
+        "stack_overflow_ingestion_started runId={} tags={} pageSize={}",
+        run.getId(),
+        properties.targetTags().size(),
+        properties.defaultPageSize());
 
     try {
       for (String tag : properties.targetTags()) {
-        int capturedForTag = ingestTag(tag);
+        TagIngestionCounts tagCounts = ingestTag(tag);
         run.addRequested(properties.defaultPageSize());
-        run.addCaptured(capturedForTag);
+        run.addFetched(tagCounts.fetchedCount());
+        run.addCaptured(tagCounts.persistedCount());
+        run.addDuplicateSkipped(tagCounts.duplicateCount());
         LOGGER.info(
-            "stack_overflow_ingestion_tag_completed tag={} captured={}", tag, capturedForTag);
+            "stack_overflow_ingestion_tag_completed tag={} fetched={} persisted={} duplicates={}",
+            tag,
+            tagCounts.fetchedCount(),
+            tagCounts.persistedCount(),
+            tagCounts.duplicateCount());
       }
 
       run.complete(Instant.now(clock));
       LOGGER.info(
-          "stack_overflow_ingestion_completed runId={} captured={}",
+          "stack_overflow_ingestion_completed runId={} status={} requested={} fetched={} persisted={} duplicates={}",
           run.getId(),
-          run.getItemsCaptured());
+          run.getStatus(),
+          run.getItemsRequested(),
+          run.getItemsFetched(),
+          run.getItemsCaptured(),
+          run.getItemsDuplicateSkipped());
       return ingestionRunRepository.save(run);
     } catch (RuntimeException exception) {
       run.fail(exception.getMessage(), Instant.now(clock));
       ingestionRunRepository.save(run);
-      LOGGER.warn("stack_overflow_ingestion_failed runId={}", run.getId(), exception);
+      LOGGER.warn(
+          "stack_overflow_ingestion_failed runId={} requested={} fetched={} persisted={} duplicates={}",
+          run.getId(),
+          run.getItemsRequested(),
+          run.getItemsFetched(),
+          run.getItemsCaptured(),
+          run.getItemsDuplicateSkipped(),
+          exception);
       throw exception;
     }
   }
 
-  private int ingestTag(String tag) {
+  private TagIngestionCounts ingestTag(String tag) {
+    LOGGER.info(
+        "stack_overflow_ingestion_tag_started tag={} pageSize={}",
+        tag,
+        properties.defaultPageSize());
     List<StackOverflowQuestionPayload> questions =
         questionClient.fetchRecentQuestions(tag, properties.defaultPageSize());
-    int captured = 0;
+    int persisted = 0;
+    int duplicates = 0;
 
     for (StackOverflowQuestionPayload question : questions) {
       if (rawTechnologySignalRepository.existsByProviderAndProviderIdAndSignalType(
           IngestionProvider.STACK_OVERFLOW, question.providerId(), SignalType.QUESTION)) {
+        duplicates++;
         continue;
       }
 
@@ -92,13 +120,16 @@ public class StackOverflowIngestionService {
               Instant.now(clock));
       try {
         rawTechnologySignalRepository.save(rawSignal);
-        captured++;
+        persisted++;
       } catch (DataIntegrityViolationException duplicate) {
+        duplicates++;
         LOGGER.debug(
             "stack_overflow_ingestion_duplicate providerId={}", question.providerId(), duplicate);
       }
     }
 
-    return captured;
+    return new TagIngestionCounts(questions.size(), persisted, duplicates);
   }
+
+  private record TagIngestionCounts(int fetchedCount, int persistedCount, int duplicateCount) {}
 }

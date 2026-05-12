@@ -78,6 +78,13 @@ Phase 6 keeps the architecture backend-only and local-demo focused:
 - Flyway migrations remain production-safe and do not insert demo-only records.
 - Dashboard controllers continue returning DTOs rather than persistence entities.
 
+## Phase 7A Orchestration Foundation
+
+Phase 7A introduces an internal orchestration application service that synchronously coordinates
+existing Stack Overflow ingestion and analytics transformation services. The orchestration layer
+returns structured results for future trigger surfaces, while manual admin REST endpoints remain
+deferred to Phase 7B.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -88,7 +95,8 @@ Planned MVP data flow:
 4. Transform raw records into daily metric snapshots.
 5. Serve recruiter-friendly trend data through read-only REST endpoints.
 6. Seed explicit local demo data for reviewer walkthroughs when the `demo` profile is active.
-7. Present dashboard views that include context and limitations in a later UI phase.
+7. Coordinate ingestion and transformation through an internal orchestration service.
+8. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

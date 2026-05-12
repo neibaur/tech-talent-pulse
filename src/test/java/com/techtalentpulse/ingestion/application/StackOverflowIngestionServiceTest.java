@@ -49,7 +49,9 @@ class StackOverflowIngestionServiceTest {
 
     assertThat(completedRun.getStatus()).isEqualTo(IngestionRunStatus.COMPLETED);
     assertThat(completedRun.getItemsRequested()).isEqualTo(2);
+    assertThat(completedRun.getItemsFetched()).isEqualTo(1);
     assertThat(completedRun.getItemsCaptured()).isEqualTo(1);
+    assertThat(completedRun.getItemsDuplicateSkipped()).isZero();
     verify(rawTechnologySignalRepository).save(any(RawTechnologySignalEntity.class));
   }
 
@@ -66,7 +68,10 @@ class StackOverflowIngestionServiceTest {
 
     IngestionRunEntity completedRun = service.ingestConfiguredTags();
 
+    assertThat(completedRun.getStatus()).isEqualTo(IngestionRunStatus.COMPLETED_ZERO_RECORDS);
+    assertThat(completedRun.getItemsFetched()).isEqualTo(1);
     assertThat(completedRun.getItemsCaptured()).isZero();
+    assertThat(completedRun.getItemsDuplicateSkipped()).isEqualTo(1);
     verify(rawTechnologySignalRepository, never()).save(any(RawTechnologySignalEntity.class));
   }
 
