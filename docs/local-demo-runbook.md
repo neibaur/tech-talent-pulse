@@ -287,7 +287,19 @@ Troubleshooting:
   logs and recent run history. The smoke script validates the local API surface, not external source
   availability.
 
-## 8. Phase 7 Operational Summary
+## 8. Troubleshooting Quick Reference
+
+| Symptom | Likely Root Cause | Quick Validation | Recommended Fix |
+| --- | --- | --- | --- |
+| CI or local startup fails with missing tables or schema validation errors. | Flyway migration files were not committed or were accidentally ignored. | Check `src/main/resources/db/migration` and run `mvn clean verify`. | Restore/commit migration files and keep Flyway as the schema source of truth. |
+| Startup fails with datasource or Flyway JDBC errors. | Datasource URL is missing, malformed, or resolves from an unresolved placeholder. | Check `src/main/resources/application.yml`, `src/main/resources/application-demo.yml`, and startup logs. | Use a concrete JDBC URL fallback such as the local Docker PostgreSQL URL and avoid unresolved nested placeholders. |
+| PostgreSQL authentication fails for a literal placeholder value. | Username/password fallback resolved to text like an environment variable placeholder. | Inspect the logged datasource username and demo profile config. | Provide concrete local demo fallbacks matching Docker Compose, with environment variables only as overrides. |
+| Dashboard or analytics endpoints return empty arrays. | No transformed `technology_trend_snapshot` rows exist yet. | Call `/api/trends`, `/api/analytics/trends/deltas`, or inspect transformation logs. | Run demo seeding or trigger transformation/pipeline with guarded admin endpoints enabled. |
+| Admin orchestration endpoints return `404`. | Guard property is disabled. | Check startup command for `tech-talent-pulse.admin.orchestration.enabled=true`. | Restart with the property enabled for local/demo operational use. |
+| Compare endpoint fails when a URL contains spaces. | Client/server URL parsing rejected unencoded whitespace before application normalization. | Retry with `tags=Java,PYTHON,java`. | Use URL-safe query strings or encode spaces if a client emits them. |
+| Smoke script fails to connect. | App is not running on the expected base URL. | Call `curl "http://localhost:8080/actuator/health"`. | Start the app or set `BASE_URL` to the active local port. |
+
+## 9. Phase 7 Operational Summary
 
 Phase 7 is now a local operational demo layer over the existing backend:
 
@@ -303,7 +315,7 @@ Known limitations remain intentional for this portfolio increment:
 - There is no queue, scheduler change, frontend, deployment infrastructure, or additional provider.
 - History readback uses existing `ingestion_run` data rather than a new job-history model.
 
-## 9. Phase 8 Analytics Summary
+## 10. Phase 8 Analytics Summary
 
 Phase 8 is now complete as a backend/API-only analytics layer:
 
@@ -314,7 +326,7 @@ Phase 8 is now complete as a backend/API-only analytics layer:
 Phase 9 can focus on frontend visualization over these existing DTO responses. Operational/admin
 endpoints remain guarded and are still local/demo tooling, not production-authenticated admin APIs.
 
-## 10. Run Validation
+## 11. Run Validation
 
 Run the full local validation gate:
 

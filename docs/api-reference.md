@@ -26,6 +26,23 @@ The optional `limit` query parameter is normalized by the application:
 Analytics responses may be empty when no transformed snapshot data exists. Run demo seeding or the
 local orchestration pipeline before expecting non-empty dashboard or analytics results.
 
+## Analytics Glossary
+
+- **Snapshot date**: the UTC-normalized calendar date assigned during transformation from raw Stack
+  Overflow question creation timestamps.
+- **Signal count**: the number of transformed raw signals for a provider/tag/snapshot date.
+- **Delta**: `currentSignalCount - previousSignalCount`.
+- **Percent change**: `delta / previousSignalCount * 100`; reported as `null` when previous data is
+  missing or the previous count is `0`.
+- **Rank movement**: `previousRank - currentRank`; positive values mean the tag moved up.
+- **Rising technologies**: tags from the latest snapshot date with positive signal growth or
+  positive rank movement, sorted by signal delta, rank movement, current signal count, then tag.
+
+Missing historical data is handled explicitly rather than inferred. A missing previous point uses a
+previous signal count of `0`, nullable previous rank, nullable rank movement, and nullable percent
+change. Analytics are deterministic and explainable: they compare stored snapshot dates and do not
+use local-time calculations or opaque scoring.
+
 ## GET /api/trends
 
 Returns recent trend snapshots ordered by newest snapshot date first, then tag.
