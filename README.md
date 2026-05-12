@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 3 analytics transformations**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, and an initial analytics transformation layer for daily tag-level trend snapshots.
+Current status: **Phase 5 dashboard API layer**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, and read-only REST endpoints for dashboard-ready metrics.
 
 ## Value Proposition
 
@@ -76,11 +76,17 @@ Initial technology focus areas:
 - Add repeatable jobs, validation rules, and test coverage.
 - Document metric definitions and limitations.
 
-### Phase 4: Dashboard and Recruiter Insights
+### Phase 4: Quality and Coverage Hardening
+
+- Enforce JaCoCo coverage gates in Maven verification.
+- Publish CI coverage and test artifacts.
+- Document future secret usage before external credentials are introduced.
+
+### Phase 5: Dashboard API Layer
 
 - Present trend summaries, comparisons, and explainable signal views.
-- Add dashboard evidence for portfolio review.
-- Harden operational and documentation workflows.
+- Add read-only REST endpoints for dashboard-ready metrics.
+- Keep the API local/portfolio-focused before authentication and frontend work.
 
 ## Skills Demonstrated
 
@@ -132,7 +138,32 @@ Phase 3 adds the first analytics-ready table and transformation service:
 - Daily tag/provider snapshots include signal count, average score, and average answer count.
 - `technology_trend_snapshot` stores one row per provider, tag, and snapshot date.
 
-No REST APIs, dashboard UI, additional providers, Kafka/event streaming, or authentication stack has been added.
+No dashboard UI, additional providers, Kafka/event streaming, or authentication stack has been added.
+
+## Phase 5 Dashboard API
+
+Phase 5 adds read-only REST endpoints over `technology_trend_snapshot` records. These endpoints expose dashboard-ready metrics without exposing JPA entities or database internals.
+
+Available endpoints:
+
+- `GET /api/trends`: recent trend snapshots, ordered by newest snapshot date first.
+- `GET /api/trends/{tag}`: trend history for one tag, ordered by newest snapshot date first.
+- `GET /api/trends/summary`: top tags by signal count and the most recent snapshot date.
+
+Optional query parameters:
+
+- `limit`: default `50` for snapshot endpoints and `5` for summary top tags; maximum `500`.
+
+Example local requests:
+
+```bash
+curl http://localhost:8080/api/trends
+curl "http://localhost:8080/api/trends?limit=25"
+curl http://localhost:8080/api/trends/java
+curl "http://localhost:8080/api/trends/summary?limit=5"
+```
+
+The API returns HTTP 200 with empty collections when no trend data exists. Authentication is not added yet because this phase is scoped to a local portfolio MVP; production exposure should add an explicit security model first.
 
 ## Validation
 
