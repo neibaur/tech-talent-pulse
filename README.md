@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 5 dashboard API layer**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, and read-only REST endpoints for dashboard-ready metrics.
+Current status: **Phase 6 API demo documentation**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, read-only REST endpoints for dashboard-ready metrics, and a local demo workflow for reviewers.
 
 ## Value Proposition
 
@@ -88,6 +88,12 @@ Initial technology focus areas:
 - Add read-only REST endpoints for dashboard-ready metrics.
 - Keep the API local/portfolio-focused before authentication and frontend work.
 
+### Phase 6: API Demo Documentation
+
+- Document the existing dashboard API endpoints and response shapes.
+- Add an explicit local `demo` profile that seeds sample Stack Overflow-like data through the normal transformation path.
+- Provide a recruiter-ready local runbook for PostgreSQL, app startup, demo data, curl checks, coverage reports, and validation.
+
 ## Skills Demonstrated
 
 This project is designed to showcase:
@@ -164,6 +170,24 @@ curl "http://localhost:8080/api/trends/summary?limit=5"
 ```
 
 The API returns HTTP 200 with empty collections when no trend data exists. Authentication is not added yet because this phase is scoped to a local portfolio MVP; production exposure should add an explicit security model first.
+
+Detailed endpoint documentation is available in [docs/api-reference.md](docs/api-reference.md).
+
+## Phase 6 Local Demo Workflow
+
+Phase 6 adds demo readiness without adding a frontend, deployment infrastructure, authentication, or new ingestion providers.
+
+The demo data seeder is disabled by default. It runs only when the `demo` Spring profile is active and `tech-talent-pulse.demo-data.enabled=true` is loaded from `application-demo.yml`. The seeder inserts clearly marked sample raw Stack Overflow-like signals, then calls the existing analytics transformation service so dashboard responses are produced through the same transformation path as normal data.
+
+Runbook:
+
+- Start PostgreSQL with Docker Compose.
+- Run the Spring Boot app with the `demo` profile.
+- Call the dashboard API endpoints with curl.
+- Run Maven and Docker Compose validation.
+- View JaCoCo reports.
+
+See [docs/local-demo-runbook.md](docs/local-demo-runbook.md) for the complete workflow.
 
 ## Validation
 
