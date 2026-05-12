@@ -119,6 +119,21 @@ date. Percent change is reported only when previous data exists and the previous
 non-zero. Rising technologies are sorted by signal growth, rank movement, current signal count, and
 tag name for deterministic output.
 
+## Phase 8B Tag Comparison Analytics
+
+Phase 8B extends the read-only analytics slice with tag comparison responses designed for future
+dashboard charts. The comparison service accepts two to five normalized tags, uses a single
+repository query for the requested tag history, preserves requested tag order, and returns:
+
+- per-tag latest metrics;
+- tag-local delta metrics against the previous point for that tag;
+- current and previous rank context from the relevant snapshot dates;
+- bounded historical points for time-series rendering;
+- explicit missing-tag entries rather than failing partial comparisons.
+
+The endpoint remains backend/API-only. No frontend, provider, authentication, deployment, queueing,
+or new persistence table is introduced.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -134,7 +149,9 @@ Planned MVP data flow:
 9. Read back recent ingestion run history through local/demo admin endpoints when explicitly enabled.
 10. Validate the local operational demo flow with the smoke script.
 11. Calculate latest-versus-previous trend deltas and rising technology insights.
-12. Present dashboard views that include context and limitations in a later UI phase.
+12. Compare two to five requested tags with latest metrics, deltas, rank movement, and bounded
+    history.
+13. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 

@@ -22,6 +22,16 @@ public interface TechnologyTrendSnapshotRepository
   List<TechnologyTrendSnapshotEntity> findByTagIgnoreCaseOrderBySnapshotDateDesc(
       String tag, Pageable pageable);
 
+  @Query(
+      """
+      select snapshot
+      from TechnologyTrendSnapshotEntity snapshot
+      where lower(snapshot.tag) in :tags
+      order by snapshot.snapshotDate desc, snapshot.tag asc
+      """)
+  List<TechnologyTrendSnapshotEntity> findByNormalizedTagsOrderBySnapshotDateDescTagAsc(
+      List<String> tags, Pageable pageable);
+
   Optional<TechnologyTrendSnapshotEntity> findFirstByOrderBySnapshotDateDesc();
 
   Optional<TechnologyTrendSnapshotEntity> findFirstBySnapshotDateBeforeOrderBySnapshotDateDesc(

@@ -1,10 +1,14 @@
 package com.techtalentpulse.analytics.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.techtalentpulse.analytics.domain.TagTrendComparisonResult;
 import com.techtalentpulse.analytics.domain.TrendDelta;
 import com.techtalentpulse.ingestion.domain.IngestionProvider;
 import com.techtalentpulse.transformation.domain.TechnologyTrendMetric;
@@ -15,6 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Pageable;
 
 class TrendAnalyticsServiceTest {
 
@@ -140,6 +145,72 @@ class TrendAnalyticsServiceTest {
     assertThat(service.trendDeltas(null)).isEmpty();
 
     verify(snapshotRepository).findFirstByOrderBySnapshotDateDesc();
+  }
+
+  @Test
+  void comparesTagsInRequestedOrderWithLatestMetricsDeltaAndHistory() {
+    LocalDate currentDate = LocalDate.parse("2026-01-03");
+    LocalDate previousDate = LocalDate.parse("2026-01-02");
+    when(snapshotRepository.findByNormalizedTagsOrderBySnapshotDateDescTagAsc(
+            List.of("java", "python", "missing"), Pageable.ofSize(150)))
+        .thenReturn(
+            List.of(
+                snapshot("java", currentDate, 20),
+                snapshot("python", currentDate, 7),
+                snapshot("java", previousDate, 10),
+                snapshot("python", previousDate, 0)));
+    when(snapshotRepository.findBySnapshotDateOrderByTagAsc(currentDate))
+        .thenReturn(
+            List.of(
+                snapshot("java", currentDate, 20),
+                snapshot("postgresql", currentDate, 12),
+                snapshot("python", currentDate, 7)));
+    when(snapshotRepository.findBySnapshotDateOrderByTagAsc(previousDate))
+        .thenReturn(
+            List.of(snapshot("java", previousDate, 10), snapshot("python", previousDate, 0)));
+
+    TagTrendComparisonResult result = service.compareTags(List.of(" Java ", "PYTHON", "missing"));
+
+    assertThat(result.tags())
+        .extracting("normalizedTag")
+        .containsExactly("java", "python", "missing");
+    assertThat(result.tags().get(0).latestMetrics().signalCount()).isEqualTo(20);
+    assertThat(result.tags().get(0).latestMetrics().currentRank()).isEqualTo(1);
+    assertThat(result.tags().get(0).deltaMetrics().previousSignalCount()).isEqualTo(10);
+    assertThat(result.tags().get(0).deltaMetrics().absoluteDelta()).isEqualTo(10);
+    assertThat(result.tags().get(0).deltaMetrics().percentChange()).isEqualTo(100.0);
+    assertThat(result.tags().get(0).history()).hasSize(2);
+    assertThat(result.tags().get(1).deltaMetrics().percentChange()).isNull();
+    assertThat(result.tags().get(2).found()).isFalse();
+    assertThat(result.tags().get(2).latestMetrics()).isNull();
+    assertThat(result.tags().get(2).history()).isEmpty();
+  }
+
+  @Test
+  void deduplicatesCompareTagsBeforeValidationAndQuerying() {
+    when(snapshotRepository.findByNormalizedTagsOrderBySnapshotDateDescTagAsc(
+            eq(List.of("java", "docker")), any(Pageable.class)))
+        .thenReturn(List.of());
+
+    TagTrendComparisonResult result = service.compareTags(List.of("Java", " java ", "Docker"));
+
+    verify(snapshotRepository)
+        .findByNormalizedTagsOrderBySnapshotDateDescTagAsc(
+            eq(List.of("java", "docker")), any(Pageable.class));
+    assertThat(result.tags()).extracting("normalizedTag").containsExactly("java", "docker");
+  }
+
+  @Test
+  void rejectsInvalidCompareTagRequests() {
+    assertThatThrownBy(() -> service.compareTags(List.of()))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> service.compareTags(List.of("java")))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(
+            () ->
+                service.compareTags(
+                    List.of("java", "docker", "kubernetes", "python", "go", "rust")))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   private TechnologyTrendSnapshotEntity snapshot(

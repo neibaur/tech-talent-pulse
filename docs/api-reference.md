@@ -228,6 +228,73 @@ Limitations:
 - Missing prior tag data does not produce a percent change because the baseline is not meaningful.
 - These analytics are explanatory indicators, not hiring predictions.
 
+## GET /api/analytics/trends/compare
+
+Compares two to five requested technology tags in a chart-ready response shape.
+
+Query parameters:
+
+- `tags`: required comma-separated list of two to five unique tags.
+
+Input handling:
+
+- Tags are trimmed and lowercased for matching.
+- Duplicate tags are collapsed while preserving first occurrence order.
+- Empty, one-tag, and more-than-five-tag requests return HTTP 400.
+- Missing tags are represented in the response with `found=false`.
+
+Example request:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/compare?tags=java,python,postgresql"
+```
+
+Example response:
+
+```json
+{
+  "tags": [
+    {
+      "requestedTag": "java",
+      "normalizedTag": "java",
+      "found": true,
+      "latestMetrics": {
+        "snapshotDate": "2026-05-10",
+        "signalCount": 20,
+        "averageScore": 4.5,
+        "averageAnswerCount": 2.0,
+        "currentRank": 1
+      },
+      "deltaMetrics": {
+        "previousSnapshotDate": "2026-05-09",
+        "previousSignalCount": 10,
+        "absoluteDelta": 10,
+        "percentChange": 100.0,
+        "previousRank": 2,
+        "rankMovement": 1
+      },
+      "history": [
+        {
+          "snapshotDate": "2026-05-10",
+          "signalCount": 20,
+          "averageScore": 4.5,
+          "averageAnswerCount": 2.0
+        }
+      ]
+    }
+  ]
+}
+```
+
+Response notes:
+
+- `latestMetrics` and `deltaMetrics` are `null` when a requested tag has no data.
+- History is bounded to the latest 30 points per tag.
+- Delta metrics compare a tag's latest point with that tag's previous available point.
+- Rank metrics are calculated against all tags available on the relevant snapshot date.
+- The response is grouped per tag so a future frontend can render summary cards and time-series
+  charts without reshaping the API contract.
+
 ## Optional Local Admin Orchestration
 
 Phase 7B adds local/demo manual orchestration triggers. They are disabled by default and require
