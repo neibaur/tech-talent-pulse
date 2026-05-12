@@ -41,6 +41,7 @@ Exact metrics will be documented before implementation and should include limita
 - Stack Exchange API ingestion for Stack Overflow question payloads.
 - Daily tag-level analytics snapshots for Stack Overflow questions.
 - Read-only REST endpoints for dashboard-ready trend snapshots and summaries.
+- Read-only advanced analytics endpoints for trend deltas and rising technology insights.
 - Static API documentation and a local demo data workflow for reviewer walkthroughs.
 - Internal orchestration service for coordinating ingestion and transformation.
 - Opt-in local/demo manual orchestration trigger endpoints.
@@ -68,6 +69,8 @@ Exact metrics will be documented before implementation and should include limita
 - New orchestration history tables during Phase 7C unless a later task explicitly requires them.
 - Frontend, deployment infrastructure, queues, async job framework, scheduler changes, and new
   providers during Phase 7D.
+- Frontend, second data provider, predictive scoring, authentication changes, and production
+  infrastructure during Phase 8A.
 
 ## Success Criteria
 
@@ -75,5 +78,6 @@ The MVP should make it possible to answer questions such as:
 
 - Which Java ecosystem technologies show strong public development activity?
 - Which signals are increasing, decreasing, or stable over a defined period?
+- Which technologies are rising between the latest two snapshot dates?
 - What evidence supports each trend summary?
 - What limitations should a recruiter understand before using the metric?

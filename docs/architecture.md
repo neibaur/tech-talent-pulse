@@ -4,13 +4,13 @@ Tech Talent Pulse is a Java 21 Spring Boot ETL and dashboard platform foundation
 
 ## Architectural Style
 
-The project will use a lightweight hexagonal architecture. The goal is to keep domain and transformation logic independent from infrastructure details while avoiding unnecessary ceremony for a portfolio-scale project.
+The project uses a lightweight hexagonal/layered architecture. The goal is to keep ingestion, transformation, analytics, API, and persistence concerns separated while avoiding unnecessary ceremony for a portfolio-scale project. This balances maintainability and delivery speed: application services own workflow and calculations, repositories isolate persistence, controllers remain DTO-focused, and the project avoids premature job-framework or platform complexity.
 
 ## Planned Components
 
 - **Ingestion adapters**: Fetch public source data, beginning with Stack Overflow questions through the Stack Exchange API.
 - **Application services**: Coordinate ingestion, validation, transformation, and persistence workflows.
-- **Domain model**: Represent technologies, source observations, metrics, trend snapshots, and source metadata.
+- **Domain model**: Represent technologies, source observations, metrics, trend snapshots, trend movement, and source metadata.
 - **Persistence adapters**: Store normalized data and analytics-ready metrics in PostgreSQL.
 - **Dashboard/API layer**: Expose governed, recruiter-friendly trend views.
 - **Operational governance**: Use documentation, review practices, validation checks, and ADRs to keep the project maintainable.
@@ -105,6 +105,20 @@ local operational flow after the app is already running. It exercises health, da
 manual orchestration triggers, and recent run history without adding frontend, authentication,
 deployment infrastructure, queues, or scheduler changes.
 
+## Phase 8A Advanced Analytics Foundation
+
+Phase 8A adds a read-only analytics slice over existing `technology_trend_snapshot` data:
+
+- `analytics/domain`: recruiter-facing trend movement records.
+- `analytics/application`: calculation of latest-versus-previous deltas, safe percent changes, ranks,
+  and rank movement.
+- `analytics/api`: DTO-based endpoints for trend deltas and rising technologies.
+
+The analytics service compares the most recent snapshot date with the previous available snapshot
+date. Percent change is reported only when previous data exists and the previous signal count is
+non-zero. Rising technologies are sorted by signal growth, rank movement, current signal count, and
+tag name for deterministic output.
+
 ## Data Flow
 
 Planned MVP data flow:
@@ -119,12 +133,14 @@ Planned MVP data flow:
 8. Optionally trigger orchestration through local/demo admin endpoints when explicitly enabled.
 9. Read back recent ingestion run history through local/demo admin endpoints when explicitly enabled.
 10. Validate the local operational demo flow with the smoke script.
-11. Present dashboard views that include context and limitations in a later UI phase.
+11. Calculate latest-versus-previous trend deltas and rising technology insights.
+12. Present dashboard views that include context and limitations in a later UI phase.
 
 ## Design Principles
 
 - Prefer explainable metrics over opaque scores.
 - Keep external API concerns isolated in adapters.
 - Keep domain and transformation logic testable without live network calls.
+- Keep analytics calculations deterministic and explainable before adding broader scoring models.
 - Treat rate limits, source terms, and data freshness as first-class design concerns.
 - Document meaningful architecture decisions with ADRs.

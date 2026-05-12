@@ -21,6 +21,7 @@ The optional `limit` query parameter is normalized by the application:
 - Values above `500` are capped at `500`.
 - Snapshot endpoints default to `50`.
 - Summary top-tag results default to `5`.
+- Advanced analytics endpoints default to `25` and cap at `100`.
 
 ## GET /api/trends
 
@@ -138,6 +139,94 @@ Example response:
 - Responses are DTOs, not JPA entities.
 - Current data comes from Stack Overflow raw question signals transformed into daily snapshots.
 - Authentication, a public deployment, dashboard UI, and additional ingestion providers remain out of scope.
+
+## GET /api/analytics/trends/deltas
+
+Returns per-tag movement by comparing the latest snapshot date with the previous available snapshot
+date.
+
+Query parameters:
+
+- `limit`: optional integer. Defaults to `25`; maximum `100`.
+
+Calculation:
+
+- `absoluteDelta = currentSignalCount - previousSignalCount`
+- `percentChange = absoluteDelta / previousSignalCount * 100`
+- `percentChange` is `null` when previous data is missing or the previous count is `0`.
+- `rankMovement = previousRank - currentRank`, so positive values mean the tag moved up.
+
+Example request:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/deltas?limit=10"
+```
+
+Example response:
+
+```json
+[
+  {
+    "tag": "java",
+    "currentSnapshotDate": "2026-05-10",
+    "previousSnapshotDate": "2026-05-09",
+    "currentSignalCount": 20,
+    "previousSignalCount": 10,
+    "absoluteDelta": 10,
+    "percentChange": 100.0,
+    "currentRank": 1,
+    "previousRank": 2,
+    "rankMovement": 1
+  }
+]
+```
+
+## GET /api/analytics/trends/rising
+
+Returns technologies from the latest snapshot date that show positive signal growth or positive rank
+movement compared with the previous snapshot date.
+
+Query parameters:
+
+- `limit`: optional integer. Defaults to `25`; maximum `100`.
+
+Sorting:
+
+1. Highest absolute signal delta.
+2. Highest positive rank movement.
+3. Highest current signal count.
+4. Tag name ascending for deterministic ties.
+
+Example request:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/rising?limit=5"
+```
+
+Example response:
+
+```json
+[
+  {
+    "tag": "postgresql",
+    "currentSnapshotDate": "2026-05-10",
+    "previousSnapshotDate": "2026-05-09",
+    "currentSignalCount": 16,
+    "previousSignalCount": 6,
+    "absoluteDelta": 10,
+    "percentChange": 166.6666666667,
+    "currentRank": 2,
+    "previousRank": 3,
+    "rankMovement": 1
+  }
+]
+```
+
+Limitations:
+
+- Phase 8A compares only the latest and immediately previous snapshot dates.
+- Missing prior tag data does not produce a percent change because the baseline is not meaningful.
+- These analytics are explanatory indicators, not hiring predictions.
 
 ## Optional Local Admin Orchestration
 

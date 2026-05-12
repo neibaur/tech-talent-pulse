@@ -2,7 +2,7 @@
 
 Tech Talent Pulse is a planned Java 21 Spring Boot ETL and dashboard portfolio project that will synthesize public developer activity, ecosystem signals, and labor-market data into recruiter-friendly technology trend intelligence.
 
-Current status: **Phase 7 operational demo workflow**. This repository now contains the Maven/Spring Boot foundation, the first raw ingestion path for Stack Overflow question signals, an analytics transformation layer for daily tag-level trend snapshots, read-only REST endpoints for dashboard-ready metrics, local demo data support, opt-in orchestration triggers, operational run history readback, and a local smoke validation script for reviewers.
+Current status: **Phase 8A advanced analytics foundation**. This repository now contains the Maven/Spring Boot foundation, Stack Overflow signal ingestion, analytics transformations, read-only dashboard APIs, recruiter-facing trend delta and rising technology APIs, local demo data support, guarded orchestration endpoints, operational run history readback, and a local smoke validation script for reviewers.
 
 ## Value Proposition
 
@@ -20,7 +20,7 @@ The project is intended to demonstrate a production-minded approach to:
 
 ## Planned Architecture
 
-Tech Talent Pulse will use a lightweight hexagonal architecture so ingestion, transformation, persistence, and presentation concerns remain separated without adding unnecessary framework ceremony.
+Tech Talent Pulse uses a lightweight hexagonal/layered architecture so ingestion, transformation, analytics, persistence, and presentation concerns remain separated without adding unnecessary framework ceremony. This shape was chosen to balance maintainability and delivery speed: it keeps core calculations testable, avoids premature job-framework complexity, and lets each phase add a narrow capability without rewriting earlier layers.
 
 Planned layers include:
 
@@ -116,6 +116,21 @@ Initial technology focus areas:
 - Add a curl-based local smoke script for the demo operational flow.
 - Document manual curl fallback commands and troubleshooting guidance.
 - Summarize Phase 7 operational capabilities and known limitations.
+
+### Phase 8A: Advanced Analytics Foundation
+
+- Add read-only trend delta analytics comparing the latest snapshot date to the previous snapshot date.
+- Add rising technology insight responses sorted by signal growth and rank movement.
+- Keep analytics responses DTO-based, deterministic, and safe around missing or zero previous data.
+
+## Key Engineering Outcomes
+
+- Reproducible local development with Docker Compose PostgreSQL, Flyway migrations, and a documented demo profile.
+- CI/CD governance through Maven verification, Spotless, JaCoCo, CodeQL, Gitleaks, and Docker Compose validation.
+- Flyway/Testcontainers parity so schema-managed persistence behavior is exercised against PostgreSQL in tests.
+- Guarded operational APIs for local/demo ingestion, transformation, pipeline execution, and run history readback.
+- Coverage discipline with the Maven JaCoCo bundle line coverage gate kept above 80%.
+- Operational troubleshooting maturity through structured orchestration results, run history, logs, runbooks, and smoke validation.
 
 ## Skills Demonstrated
 
@@ -255,6 +270,24 @@ bash scripts/smoke-local-demo.sh
 ```
 
 The script checks health, dashboard read APIs, manual orchestration triggers, and recent run history. Windows users can run it from Git Bash. See [docs/local-demo-runbook.md](docs/local-demo-runbook.md) for startup commands, manual curl equivalents, and troubleshooting notes.
+
+## Phase 8A Advanced Analytics
+
+Phase 8A adds recruiter-facing analytics over existing `technology_trend_snapshot` data.
+
+Available endpoints:
+
+- `GET /api/analytics/trends/deltas`: compares the most recent snapshot date with the previous snapshot date.
+- `GET /api/analytics/trends/rising`: returns technologies with positive signal growth or positive rank movement.
+
+Example local requests:
+
+```bash
+curl "http://localhost:8080/api/analytics/trends/deltas?limit=10"
+curl "http://localhost:8080/api/analytics/trends/rising?limit=5"
+```
+
+Deltas include current and previous signal counts, absolute delta, percent change when previous data is non-zero, current rank, previous rank, and rank movement. Missing previous data is represented with `previousSignalCount` of `0` and nullable percent/rank fields.
 
 ## Validation
 

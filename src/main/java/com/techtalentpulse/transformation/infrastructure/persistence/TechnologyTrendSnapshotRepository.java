@@ -17,10 +17,15 @@ public interface TechnologyTrendSnapshotRepository
 
   List<TechnologyTrendSnapshotEntity> findAllByOrderBySnapshotDateDescTagAsc(Pageable pageable);
 
+  List<TechnologyTrendSnapshotEntity> findBySnapshotDateOrderByTagAsc(LocalDate snapshotDate);
+
   List<TechnologyTrendSnapshotEntity> findByTagIgnoreCaseOrderBySnapshotDateDesc(
       String tag, Pageable pageable);
 
   Optional<TechnologyTrendSnapshotEntity> findFirstByOrderBySnapshotDateDesc();
+
+  Optional<TechnologyTrendSnapshotEntity> findFirstBySnapshotDateBeforeOrderBySnapshotDateDesc(
+      LocalDate snapshotDate);
 
   @Query(
       """
