@@ -9,23 +9,31 @@ and verify the read-only dashboard endpoints.
 - Maven
 - Docker Desktop or another Docker environment with Compose support
 
-## 1. Configure Local Docker Database Variables
+## 1. Review Local Docker Database Defaults
 
-The repository does not contain database credential values. Set these environment variables in your
-local shell using values that are only for your machine:
+The local demo workflow works without exporting database environment variables first. Docker Compose
+and the Spring Boot `demo` profile share these local-only defaults:
+
+- Database name: `tech_talent_pulse`
+- Username: `tech_talent_pulse`
+- Password: `tech_talent_pulse`
+
+With the `demo` profile active, the Spring Boot app uses this local JDBC URL by default:
+
+```text
+jdbc:postgresql://localhost:5432/tech_talent_pulse
+```
+
+These defaults are for local Docker demo use only. They are not production credentials.
+
+Optionally override the Docker database values in your local shell:
 
 - `POSTGRES_DB`
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 
-With the `demo` profile active, the Spring Boot app uses this local JDBC URL by default:
-
-```text
-jdbc:postgresql://localhost:5432/${POSTGRES_DB}
-```
-
-The demo profile reads `POSTGRES_USER` and `POSTGRES_PASSWORD` for local database access. If a local
-setup needs a different JDBC URL or separate app credentials, override these environment variables:
+If the Spring Boot app should use a different JDBC URL or separate app credentials, optionally
+override these demo-specific environment variables:
 
 - `TECH_TALENT_PULSE_DEMO_DATASOURCE_URL`
 - `TECH_TALENT_PULSE_DEMO_DATASOURCE_USERNAME`
@@ -126,7 +134,8 @@ The current line coverage gate is `80%` at the Maven bundle level.
 - Demo data is not loaded by the default profile.
 - Demo data is not loaded by the `demo` profile unless `tech-talent-pulse.demo-data.enabled=true`
   is supplied explicitly.
+- Demo datasource defaults are local-only and can be overridden through environment variables.
 - No Flyway migration inserts demo data.
 - No external API calls are required for the demo workflow.
-- No secrets or credential values are stored in demo configuration.
+- No production secrets or credential values are stored in demo configuration.
 - The demo seeder uses repository and transformation paths instead of raw SQL inserts.
