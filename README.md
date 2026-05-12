@@ -121,7 +121,7 @@ Local runtime configuration is environment-variable based:
 
 No secret values are committed to the repository.
 
-The local Docker Compose file defines a PostgreSQL service and a named volume for local persistence. It intentionally references environment variable names only.
+The local Docker Compose file defines a PostgreSQL service and a named volume for local persistence. The `demo` profile and Docker Compose share local-only database defaults for reviewer walkthroughs; production-like runs should use explicit environment configuration.
 
 ## Phase 2 Ingestion Foundation
 
@@ -177,12 +177,12 @@ Detailed endpoint documentation is available in [docs/api-reference.md](docs/api
 
 Phase 6 adds demo readiness without adding a frontend, deployment infrastructure, authentication, or new ingestion providers.
 
-The demo data seeder is disabled by default. It runs only when the `demo` Spring profile is active and `tech-talent-pulse.demo-data.enabled=true` is loaded from `application-demo.yml`. The seeder inserts clearly marked sample raw Stack Overflow-like signals, then calls the existing analytics transformation service so dashboard responses are produced through the same transformation path as normal data.
+The demo data seeder is disabled by default. With the `demo` profile active, the app uses a local Docker PostgreSQL JDBC URL and local-only database defaults that match Docker Compose. Environment variables can override those defaults. The seeder runs only when the `demo` Spring profile is active and `tech-talent-pulse.demo-data.enabled=true` is supplied explicitly. It inserts clearly marked sample raw Stack Overflow-like signals, then calls the existing analytics transformation service so dashboard responses are produced through the same transformation path as normal data.
 
 Runbook:
 
 - Start PostgreSQL with Docker Compose.
-- Run the Spring Boot app with the `demo` profile.
+- Run the Spring Boot app with the `demo` profile, with or without explicit demo seeding.
 - Call the dashboard API endpoints with curl.
 - Run Maven and Docker Compose validation.
 - View JaCoCo reports.

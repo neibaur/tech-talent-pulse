@@ -9,20 +9,35 @@ and verify the read-only dashboard endpoints.
 - Maven
 - Docker Desktop or another Docker environment with Compose support
 
-## 1. Configure Local Environment Variables
+## 1. Review Local Docker Database Defaults
 
-The repository does not contain database credential values. Set these environment variables in your
-local shell using values that are only for your machine:
+The local demo workflow works without exporting database environment variables first. Docker Compose
+and the Spring Boot `demo` profile share these local-only defaults:
+
+- Database name: `tech_talent_pulse`
+- Username: `tech_talent_pulse`
+- Password: `tech_talent_pulse`
+
+With the `demo` profile active, the Spring Boot app uses this local JDBC URL by default:
+
+```text
+jdbc:postgresql://localhost:5432/tech_talent_pulse
+```
+
+These defaults are for local Docker demo use only. They are not production credentials.
+
+Optionally override the Docker database values in your local shell:
 
 - `POSTGRES_DB`
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
-- `TECH_TALENT_PULSE_DATASOURCE_URL`
-- `TECH_TALENT_PULSE_DATASOURCE_USERNAME`
-- `TECH_TALENT_PULSE_DATASOURCE_PASSWORD`
 
-The `TECH_TALENT_PULSE_DATASOURCE_*` values should point the Spring Boot app at the PostgreSQL
-container started by Docker Compose.
+If the Spring Boot app should use a different JDBC URL or separate app credentials, optionally
+override these demo-specific environment variables:
+
+- `TECH_TALENT_PULSE_DEMO_DATASOURCE_URL`
+- `TECH_TALENT_PULSE_DEMO_DATASOURCE_USERNAME`
+- `TECH_TALENT_PULSE_DEMO_DATASOURCE_PASSWORD`
 
 ## 2. Start PostgreSQL
 
@@ -36,13 +51,21 @@ Confirm the Compose file is valid:
 docker compose config
 ```
 
-## 3. Run The Spring Boot App With Demo Data
+## 3. Run The Spring Boot App Without Demo Data
 
-The demo data seeder is disabled by default. It runs only when the `demo` Spring profile is active
-and `tech-talent-pulse.demo-data.enabled=true` is loaded from `application-demo.yml`.
+The `demo` profile can start against local Docker PostgreSQL without seeding demo data:
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=demo
+```
+
+## 4. Run The Spring Boot App With Demo Data
+
+The demo data seeder is disabled by default. It runs only when the `demo` Spring profile is active
+and `tech-talent-pulse.demo-data.enabled=true` is supplied explicitly.
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=demo -Dspring-boot.run.arguments="--tech-talent-pulse.demo-data.enabled=true"
 ```
 
 On startup, Flyway applies the production-safe schema migrations, then the demo seeder inserts
@@ -52,7 +75,7 @@ The seeded records are clearly marked in raw payload titles as demo sample data.
 The seeder is idempotent for its provider IDs, so restarting the app with the `demo` profile should
 not duplicate raw demo signals.
 
-## 4. Call The API
+## 5. Call The API
 
 Recent trend snapshots:
 
@@ -78,7 +101,7 @@ Health check:
 curl "http://localhost:8080/actuator/health"
 ```
 
-## 5. Lightweight API Smoke Test
+## 6. Lightweight API Smoke Test
 
 After the app starts with the `demo` profile, these commands should return HTTP 200:
 
@@ -88,7 +111,7 @@ curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/java?
 curl -o /dev/null -s -w "%{http_code}\n" "http://localhost:8080/api/trends/summary?limit=5"
 ```
 
-## 6. Run Validation
+## 7. Run Validation
 
 Run the full local validation gate:
 
@@ -109,7 +132,10 @@ The current line coverage gate is `80%` at the Maven bundle level.
 ## Demo Data Safety
 
 - Demo data is not loaded by the default profile.
+- Demo data is not loaded by the `demo` profile unless `tech-talent-pulse.demo-data.enabled=true`
+  is supplied explicitly.
+- Demo datasource defaults are local-only and can be overridden through environment variables.
 - No Flyway migration inserts demo data.
 - No external API calls are required for the demo workflow.
-- No secrets or credential values are stored in demo configuration.
+- No production secrets or credential values are stored in demo configuration.
 - The demo seeder uses repository and transformation paths instead of raw SQL inserts.
