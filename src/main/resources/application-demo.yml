@@ -1,3 +1,9 @@
+spring:
+  datasource:
+    url: ${TECH_TALENT_PULSE_DEMO_DATASOURCE_URL:jdbc:postgresql://localhost:5432/${POSTGRES_DB:tech_talent_pulse}}
+    username: ${TECH_TALENT_PULSE_DEMO_DATASOURCE_USERNAME:${POSTGRES_USER}}
+    password: ${TECH_TALENT_PULSE_DEMO_DATASOURCE_PASSWORD:${POSTGRES_PASSWORD}}
+
 tech-talent-pulse:
   demo-data:
-    enabled: true
+    enabled: false
