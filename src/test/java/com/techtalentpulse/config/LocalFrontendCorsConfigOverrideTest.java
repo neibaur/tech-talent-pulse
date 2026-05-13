@@ -10,55 +10,39 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@WebMvcTest(controllers = LocalFrontendCorsConfigTest.TestController.class)
+@WebMvcTest(controllers = LocalFrontendCorsConfigOverrideTest.TestController.class)
 @Import(LocalFrontendCorsConfig.class)
 @ActiveProfiles("demo")
-class LocalFrontendCorsConfigTest {
+@TestPropertySource(properties = "tech-talent-pulse.web.cors.allowed-origins=http://localhost:5173")
+class LocalFrontendCorsConfigOverrideTest {
 
   @Autowired private MockMvc mockMvc;
 
   @Test
-  void allowsCommonAstroDevServerOriginsForApiRequests() throws Exception {
-    assertAllowedOrigin("http://localhost:4321");
-    assertAllowedOrigin("http://127.0.0.1:4321");
-    assertAllowedOrigin("http://localhost:4322");
-    assertAllowedOrigin("http://127.0.0.1:4322");
-  }
-
-  @Test
-  void allowsCommonAstroDevServerOriginsForHealthRequests() throws Exception {
+  void usesConfiguredAllowedOriginsWhenOverrideIsProvided() throws Exception {
     mockMvc
         .perform(
-            options("/actuator/health")
-                .header(HttpHeaders.ORIGIN, "http://127.0.0.1:4321")
+            options("/api/trends")
+                .header(HttpHeaders.ORIGIN, "http://localhost:5173")
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET"))
         .andExpect(status().isOk())
         .andExpect(
-            header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://127.0.0.1:4321"));
+            header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "http://localhost:5173"));
   }
 
   @Test
-  void doesNotAllowUnexpectedOrigins() throws Exception {
+  void doesNotAddDefaultOriginsWhenOverrideIsProvided() throws Exception {
     mockMvc
         .perform(
             options("/api/trends")
-                .header(HttpHeaders.ORIGIN, "http://example.com")
+                .header(HttpHeaders.ORIGIN, "http://localhost:4321")
                 .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET"))
         .andExpect(status().isForbidden());
-  }
-
-  private void assertAllowedOrigin(String origin) throws Exception {
-    mockMvc
-        .perform(
-            options("/api/trends")
-                .header(HttpHeaders.ORIGIN, origin)
-                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET"))
-        .andExpect(status().isOk())
-        .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin));
   }
 
   @RestController

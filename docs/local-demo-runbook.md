@@ -316,6 +316,10 @@ Open:
 http://localhost:4321
 ```
 
+Prefer the `localhost` URL for the demo walkthrough. Astro may move to a fallback port when `4321`
+is already occupied, and the backend local CORS defaults also allow the common `127.0.0.1` Astro
+origins on ports `4321` and `4322`.
+
 The dashboard calls:
 
 - `GET /api/analytics/trends/rising`
@@ -330,15 +334,18 @@ PUBLIC_TECH_TALENT_PULSE_API_URL="http://localhost:8080" pnpm run dev
 
 The backend allows the Astro dev server through a local-development CORS setting:
 
-- `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, default `http://localhost:4321`
+- Default local origins: `http://localhost:4321`, `http://127.0.0.1:4321`,
+  `http://localhost:4322`, and `http://127.0.0.1:4322`.
+- `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, a comma-separated override for the local frontend
+  origins allowed by the `demo` and `dev` profiles.
 
 Frontend troubleshooting:
 
 - If the dashboard says the backend API is unavailable, confirm the Spring Boot app is running and
   `curl "http://localhost:8080/actuator/health"` returns `200`.
-- If the browser console shows CORS errors, confirm the frontend is running from
-  `http://localhost:4321` or set `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS` to the active local
-  frontend origin.
+- If the browser console shows `403 Forbidden`, missing `Access-Control-Allow-Origin`, or other CORS
+  errors, confirm the frontend origin is one of the supported local Astro origins or set
+  `TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS` to the active local frontend origin.
 - If cards or charts are empty, run demo seeding or trigger the pipeline so transformed snapshots
   exist. Empty analytics data is valid when the database has no snapshot history.
 - If the Astro dev server uses another port, update the backend CORS origin before refreshing the
