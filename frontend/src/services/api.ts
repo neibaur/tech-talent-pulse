@@ -87,13 +87,15 @@ async function getJson<T>(path: string): Promise<T> {
     response = await fetch(`${API_BASE_URL}${path}`);
   } catch (error) {
     throw new Error(
-      `Could not connect to ${API_BASE_URL}. Confirm the backend is running and CORS is enabled for the Astro dev server.`,
+      "The dashboard could not connect to the local analytics API. Confirm the Spring Boot backend is running and the frontend API URL is correct.",
       { cause: error },
     );
   }
 
   if (!response.ok) {
-    throw new Error(`API request failed with HTTP ${response.status} for ${path}.`);
+    throw new Error(
+      "The analytics API responded unexpectedly. Confirm the backend is healthy and try refreshing the dashboard.",
+    );
   }
 
   return response.json() as Promise<T>;

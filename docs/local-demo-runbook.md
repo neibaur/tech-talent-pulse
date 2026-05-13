@@ -384,14 +384,15 @@ Phase 8 is now complete as a backend/API-only analytics layer:
 Phase 9 can focus on frontend visualization over these existing DTO responses. Operational/admin
 endpoints remain guarded and are still local/demo tooling, not production-authenticated admin APIs.
 
-## 12. Phase 9A Frontend Summary
+## 12. Phase 9 Frontend Summary
 
-Phase 9A begins frontend visualization without changing backend API contracts:
+Phase 9 begins frontend visualization without changing backend API contracts:
 
 - Astro 6 provides the static-friendly frontend foundation.
 - React is limited to the dashboard/chart island.
 - Recharts renders comparison history from the existing chart-ready API response.
-- The UI includes loading, empty, and backend-unavailable states for local demos.
+- Phase 9B improves recruiter/demo presentation with summary cards, clearer metric labels,
+  improved empty/offline states, and a more readable comparison chart.
 - The frontend is not authenticated and should not be treated as production hosting.
 
 ## 13. Run Validation
@@ -408,6 +409,8 @@ Run the frontend build check:
 
 ```bash
 cd frontend
+pnpm install
+pnpm astro check
 pnpm run build
 ```
 
