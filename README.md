@@ -385,6 +385,10 @@ Default local ports:
 - Spring Boot API: `http://localhost:8080`
 - Astro frontend: `http://localhost:4321`
 
+Use the `localhost` frontend URL when possible. Astro may fall back to the next available port if
+`4321` is already in use, and local CORS defaults also allow common Astro fallback origins on
+`127.0.0.1`.
+
 Start the backend with demo data and guarded orchestration for a complete local walkthrough:
 
 ```bash
@@ -408,9 +412,11 @@ The frontend reads from `PUBLIC_TECH_TALENT_PULSE_API_URL` and defaults to
 PUBLIC_TECH_TALENT_PULSE_API_URL="http://localhost:8080" pnpm run dev
 ```
 
-Spring Boot allows the local Astro dev server origin by default through
-`TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS`, which defaults to `http://localhost:4321`. This is a
-local-development CORS setting, not a production CORS policy.
+Spring Boot allows common local Astro dev server origins by default when the `demo` or `dev` Spring
+profile is active: `http://localhost:4321`, `http://127.0.0.1:4321`,
+`http://localhost:4322`, and `http://127.0.0.1:4322`.
+`TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS` can override that comma-separated list for another
+local origin. This is a local-development CORS setting, not a production CORS policy.
 
 If the dashboard shows an offline message, start the Spring Boot backend and confirm
 `http://localhost:8080/actuator/health` returns `200`. If the dashboard is reachable but cards or

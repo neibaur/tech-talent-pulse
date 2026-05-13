@@ -34,7 +34,7 @@ tech-talent-pulse:
       enabled: false
   web:
     cors:
-      allowed-origins: ${TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS:http://localhost:4321}
+      allowed-origins: ${TECH_TALENT_PULSE_WEB_CORS_ALLOWED_ORIGINS:http://localhost:4321,http://127.0.0.1:4321,http://localhost:4322,http://127.0.0.1:4322}
   stack-exchange:
     base-url: https://api.stackexchange.com/2.3
     site: stackoverflow
