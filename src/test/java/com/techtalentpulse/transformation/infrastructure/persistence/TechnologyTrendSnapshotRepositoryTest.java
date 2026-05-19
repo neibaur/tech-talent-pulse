@@ -17,9 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -28,8 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Transactional
 class TechnologyTrendSnapshotRepositoryTest {
 
-  @Container
-  static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+  @Container static final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:16");
 
   @DynamicPropertySource
   static void registerPostgresProperties(DynamicPropertyRegistry registry) {
@@ -151,7 +150,7 @@ class TechnologyTrendSnapshotRepositoryTest {
   }
 
   private static void registerPostgresProperties(
-      DynamicPropertyRegistry registry, PostgreSQLContainer<?> postgres) {
+      DynamicPropertyRegistry registry, PostgreSQLContainer postgres) {
     registry.add("spring.datasource.url", postgres::getJdbcUrl);
     registry.add("spring.datasource.username", postgres::getUsername);
     registry.add("spring.datasource.password", postgres::getPassword);
