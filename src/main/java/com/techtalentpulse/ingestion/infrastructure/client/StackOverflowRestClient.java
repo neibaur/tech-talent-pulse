@@ -29,7 +29,7 @@ public class StackOverflowRestClient implements StackOverflowQuestionClient {
 
   @Override
   public List<StackOverflowQuestionPayload> fetchRecentQuestions(String tag, int pageSize) {
-    JsonNode response =
+    String responseBody =
         restClient
             .get()
             .uri(
@@ -43,8 +43,9 @@ public class StackOverflowRestClient implements StackOverflowQuestionClient {
                         .queryParam("sort", "creation")
                         .build())
             .retrieve()
-            .body(JsonNode.class);
+            .body(String.class);
 
+    JsonNode response = parseResponse(responseBody);
     JsonNode items = response == null ? objectMapper.createArrayNode() : response.path("items");
     List<StackOverflowQuestionPayload> questions = new ArrayList<>();
 
@@ -61,6 +62,18 @@ public class StackOverflowRestClient implements StackOverflowQuestionClient {
     }
 
     return questions;
+  }
+
+  private JsonNode parseResponse(String responseBody) {
+    if (responseBody == null || responseBody.isBlank()) {
+      return null;
+    }
+    try {
+      return objectMapper.readTree(responseBody);
+    } catch (JsonProcessingException exception) {
+      throw new IllegalStateException(
+          "Unable to parse Stack Overflow question response", exception);
+    }
   }
 
   private String writePayload(JsonNode item) {
