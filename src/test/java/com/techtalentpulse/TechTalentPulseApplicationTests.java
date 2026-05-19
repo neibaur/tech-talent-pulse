@@ -11,9 +11,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest(
     properties = {
       "spring.autoconfigure.exclude="
-          + "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,"
-          + "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,"
-          + "org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration",
+          + "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,"
+          + "org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration,"
+          + "org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration",
       "tech-talent-pulse.stack-exchange.scheduler-enabled=false",
       "tech-talent-pulse.stack-exchange.base-url=https://api.stackexchange.com/2.3",
       "tech-talent-pulse.stack-exchange.site=stackoverflow",
