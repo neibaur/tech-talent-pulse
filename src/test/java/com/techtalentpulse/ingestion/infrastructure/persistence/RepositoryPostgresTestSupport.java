@@ -1,7 +1,7 @@
 package com.techtalentpulse.ingestion.infrastructure.persistence;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 final class RepositoryPostgresTestSupport {
 
@@ -10,7 +10,7 @@ final class RepositoryPostgresTestSupport {
   private RepositoryPostgresTestSupport() {}
 
   static void registerPostgresProperties(
-      DynamicPropertyRegistry registry, PostgreSQLContainer<?> postgres) {
+      DynamicPropertyRegistry registry, PostgreSQLContainer postgres) {
     registry.add("spring.datasource.url", postgres::getJdbcUrl);
     registry.add("spring.datasource.username", postgres::getUsername);
     registry.add("spring.datasource.password", postgres::getPassword);
