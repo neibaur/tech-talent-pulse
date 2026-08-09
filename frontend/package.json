@@ -19,7 +19,7 @@
   "pnpm": {
     "overrides": {
       "@babel/core": "7.29.6",
-      "fast-uri": "3.1.4",
+      "fast-uri": "3.1.5",
       "yaml": "2.9.0"
     }
   },
