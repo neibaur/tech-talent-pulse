@@ -1,10 +1,18 @@
 version: 2
 updates:
-  # Maven dependency updates will become active after a pom.xml is introduced.
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+    groups:
+      maven-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
     open-pull-requests-limit: 5
 
   - package-ecosystem: "github-actions"
