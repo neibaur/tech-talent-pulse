@@ -15,6 +15,34 @@ updates:
           - patch
     open-pull-requests-limit: 5
 
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      vitest-major:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types:
+          - major
+      eslint-major:
+        patterns:
+          - "eslint"
+          - "@eslint/*"
+          - "typescript-eslint"
+        update-types:
+          - major
+    open-pull-requests-limit: 5
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
