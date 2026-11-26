@@ -87,12 +87,9 @@ public class TrendAnalyticsService {
 
     List<TagTrendComparison> comparisons =
         normalizedTags.stream()
-            .map(
-                tag ->
-                    toTagTrendComparison(
-                        tag,
-                        snapshotsByTag.getOrDefault(tag.normalizedTag(), List.of()),
-                        ranksByDate))
+            .map(tag ->
+                toTagTrendComparison(
+                    tag, snapshotsByTag.getOrDefault(tag.normalizedTag(), List.of()), ranksByDate))
             .toList();
     return new TagTrendComparisonResult(comparisons);
   }
@@ -129,26 +126,25 @@ public class TrendAnalyticsService {
     Map<String, Integer> currentRanks = ranksByTag(currentSnapshots);
 
     return currentSnapshots.stream()
-        .map(
-            current -> {
-              TechnologyTrendSnapshotEntity previous = previousByTag.get(current.getTag());
-              int currentSignalCount = current.getSignalCount();
-              int previousSignalCount = previous == null ? 0 : previous.getSignalCount();
-              int absoluteDelta = currentSignalCount - previousSignalCount;
-              Integer previousRank = previousRanks.get(current.getTag());
-              int currentRank = currentRanks.get(current.getTag());
-              return new TrendDelta(
-                  current.getTag(),
-                  currentDate,
-                  previousDate,
-                  currentSignalCount,
-                  previousSignalCount,
-                  absoluteDelta,
-                  percentChange(currentSignalCount, previousSignalCount, previous),
-                  currentRank,
-                  previousRank,
-                  previousRank == null ? null : previousRank - currentRank);
-            })
+        .map(current -> {
+          TechnologyTrendSnapshotEntity previous = previousByTag.get(current.getTag());
+          int currentSignalCount = current.getSignalCount();
+          int previousSignalCount = previous == null ? 0 : previous.getSignalCount();
+          int absoluteDelta = currentSignalCount - previousSignalCount;
+          Integer previousRank = previousRanks.get(current.getTag());
+          int currentRank = currentRanks.get(current.getTag());
+          return new TrendDelta(
+              current.getTag(),
+              currentDate,
+              previousDate,
+              currentSignalCount,
+              previousSignalCount,
+              absoluteDelta,
+              percentChange(currentSignalCount, previousSignalCount, previous),
+              currentRank,
+              previousRank,
+              previousRank == null ? null : previousRank - currentRank);
+        })
         .toList();
   }
 
@@ -220,13 +216,12 @@ public class TrendAnalyticsService {
     List<TagTrendHistoryPoint> history =
         snapshots.stream()
             .limit(DEFAULT_COMPARE_HISTORY_LIMIT)
-            .map(
-                snapshot ->
-                    new TagTrendHistoryPoint(
-                        snapshot.getSnapshotDate(),
-                        snapshot.getSignalCount(),
-                        snapshot.getAverageScore(),
-                        snapshot.getAverageAnswerCount()))
+            .map(snapshot ->
+                new TagTrendHistoryPoint(
+                    snapshot.getSnapshotDate(),
+                    snapshot.getSignalCount(),
+                    snapshot.getAverageScore(),
+                    snapshot.getAverageAnswerCount()))
             .toList();
 
     return new TagTrendComparison(

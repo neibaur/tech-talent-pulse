@@ -54,15 +54,12 @@ public class TechnologyTrendTransformationService {
 
     for (RawTechnologySignalEntity rawSignal : rawSignals) {
       parseQuestion(rawSignal)
-          .ifPresent(
-              question -> {
-                MetricKey key =
-                    new MetricKey(
-                        rawSignal.getProvider(), rawSignal.getSourceTag(), question.snapshotDate());
-                groupedMetrics
-                    .computeIfAbsent(key, ignored -> new MetricAccumulator())
-                    .add(question);
-              });
+          .ifPresent(question -> {
+            MetricKey key =
+                new MetricKey(
+                    rawSignal.getProvider(), rawSignal.getSourceTag(), question.snapshotDate());
+            groupedMetrics.computeIfAbsent(key, ignored -> new MetricAccumulator()).add(question);
+          });
     }
 
     Instant capturedAt = Instant.now(clock);
@@ -110,11 +107,10 @@ public class TechnologyTrendTransformationService {
         snapshotRepository
             .findByProviderAndTagAndSnapshotDate(
                 metric.provider(), metric.tag(), metric.snapshotDate())
-            .map(
-                existing -> {
-                  existing.updateFrom(metric, capturedAt);
-                  return existing;
-                })
+            .map(existing -> {
+              existing.updateFrom(metric, capturedAt);
+              return existing;
+            })
             .orElseGet(() -> new TechnologyTrendSnapshotEntity(metric, capturedAt));
 
     snapshotRepository.save(snapshot);
