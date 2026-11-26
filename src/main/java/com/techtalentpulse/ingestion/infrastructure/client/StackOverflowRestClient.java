@@ -32,16 +32,15 @@ public class StackOverflowRestClient implements StackOverflowQuestionClient {
     String responseBody =
         restClient
             .get()
-            .uri(
-                uriBuilder ->
-                    uriBuilder
-                        .path("/questions")
-                        .queryParam("site", properties.site())
-                        .queryParam("tagged", tag)
-                        .queryParam("pagesize", pageSize)
-                        .queryParam("order", "desc")
-                        .queryParam("sort", "creation")
-                        .build())
+            .uri(uriBuilder ->
+                uriBuilder
+                    .path("/questions")
+                    .queryParam("site", properties.site())
+                    .queryParam("tagged", tag)
+                    .queryParam("pagesize", pageSize)
+                    .queryParam("order", "desc")
+                    .queryParam("sort", "creation")
+                    .build())
             .retrieve()
             .body(String.class);
 

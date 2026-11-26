@@ -208,10 +208,8 @@ class TrendAnalyticsServiceTest {
     assertThatThrownBy(() -> service.compareTags(List.of("java")))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Compare requires at least two unique non-blank tags.");
-    assertThatThrownBy(
-            () ->
-                service.compareTags(
-                    List.of("java", "docker", "kubernetes", "python", "go", "rust")))
+    assertThatThrownBy(() ->
+            service.compareTags(List.of("java", "docker", "kubernetes", "python", "go", "rust")))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Compare supports at most five unique tags.");
   }
